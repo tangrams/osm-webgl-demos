@@ -1,5 +1,5 @@
 {
-  "name": "tangram-demo",
+  "name": "mozfest-demo",
   "dependencies": {
     "tangram": "git://github.com/tangrams/tangram.git"
   }

@@ -17,20 +17,11 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                url:  'http://localhost:8000/demos/24640.json'
+                url:  'http://localhost:8000/demo2/24640.json'
             },
-            layers: 'demos/gl_layers.js',
-            styles: 'demos/demo_gl_styles.yaml'
+            layers: 'layers.js',
+            styles: 'styles.yaml'
         },
-        'demo2': {
-            source: {
-                type: 'GeoJSONTileSource',
-                url:  'http://localhost:8000/demos/24640.json'
-            },
-            layers: 'demos/gl_layers.js',
-            styles: 'demos/demo2_gl_styles.yaml'
-        },
-
     };
     var locations = {
         'London': [51.508, -0.105, 15],

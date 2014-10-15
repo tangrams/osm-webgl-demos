@@ -27,13 +27,6 @@ modes:
                 # fragcolor: gl_FragColor = vec4(color, .2);
                 # fragcolor: gl_FragColor = vec4(color, 1.0);
 
-
-    points:
-        shaders:
-            transforms:
-                # fragment: color += vec3(gl_FragCoord.x / u_resolution.x, 0.0, gl_FragCoord.y / u_resolution.y);
-                fragment: { url: demos/shaders/color_bleed.glsl }
-
 layers:
     earth:
         mode:
