@@ -270,19 +270,6 @@ console.log("!"+tile_sources[default_tile_source]);
                 gui.__controllers[i].updateDisplay();
             }
         },
-        settings: {
-            'colorbleed': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
-
-                    this.state.animated = scene.modes[mode].shaders.defines['EFFECT_COLOR_BLEED_ANIMATED'];
-                    this.folder.add(this.state, 'animated').onChange(function(value) {
-                        scene.modes[mode].shaders.defines['EFFECT_COLOR_BLEED_ANIMATED'] = value;
-                        scene.refreshModes();
-                    });
-                }
-            },
-        },
         initial: { // initial state to restore to on mode switch
             layers: {}
         },
@@ -331,39 +318,21 @@ console.log("!"+tile_sources[default_tile_source]);
         // #define controls
         addGUIDefines();
 
-        // buildings color
-        gui.buildings = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'buildings');
-        colorchange.onChange(function(value) {
-            scene.modes["transparentbuildings"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
+        // add color controls for each layer
+        var layer_controls = {};
+        layer.scene.layers.forEach(function(l) {
+            if (layer.scene.styles.layers[l.name] == null) {
+                return;
+            }
 
-        // earth color
-        gui.earth = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'earth');
-        colorchange.onChange(function(value) {
-            scene.modes["transparent-earth"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
-
-        // landuse color
-        gui.landuse = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'landuse');
-        colorchange.onChange(function(value) {
-            scene.modes["transparent-landuse"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
-
-        // landuse color
-        gui.water = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'water');
-        colorchange.onChange(function(value) {
-            scene.modes["transparent-water"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
-
-        // landuse color
-        gui.roads = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'roads');
-        colorchange.onChange(function(value) {
-            scene.modes["roadshader"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
+            var mycolor = scene.modes[l.name+"-mode"].shaders.uniforms.u_color;
+            layer_controls[l.name] = [mycolor[0] * 255, mycolor[1] * 255, mycolor[2] * 255];
+            gui.
+                addColor(layer_controls, l.name).
+                onChange(function(value) {
+                    scene.modes[l.name+"-mode"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
+                    scene.dirty = true;
+                });
         });
 
         // Layers

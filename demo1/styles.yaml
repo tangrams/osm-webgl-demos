@@ -18,7 +18,7 @@ modes:
 
     transparent:
         extends: polygons
-        animated: true
+
         shaders:
             transforms:
                 fragment: if (color[0] == 0.) discard;
@@ -118,10 +118,3 @@ layers:
             # default: Style.pixels(function(f, t, h) { return 2 * Math.pow(h.zoom, 0.5); })
             # default: function(f, t, h) { return 2 * h.zoom; }
 
-    # places:
-    #     filter: function(f, t) { return (t.coords.z >= 13); }
-    #     color: {
-    #         # default: [0.0, 1.0, 1.0]
-    #         default: function(f) { return f.properties.kind == 'administrative' ? [1, 0, 1] : [1, 1, 0]; }
-    #     size:
-    #         default: Style.pixels(5)

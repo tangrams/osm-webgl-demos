@@ -1,194 +1,82 @@
-camera:
-    type: perspective
-
-modes:
-    # note: consider this syntax as a special case for global mode settings
-    # all:
-    #     shaders:
-    #         transforms:
-    #             fragment: { url: demos/shaders/spotlight.glsl }
-
-    transparent:
-        extends: polygons
-        animated: true
-        shaders:
-            uniforms:
-                u_color: [.5, .5, .5]
-            transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: |
-                    color = u_color;
-                    // if (color[0] == 0.) discard;
-
-    transparentbuildings:
-        extends: polygons
-        animated: true
-        shaders:
-            uniforms:
-                u_color: [.5, .5, .5]
-            transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: |
-                    color = u_color;
-                    // if (color[0] == 0.) discard;
-
-    transparent-earth:
-        extends: polygons
-        animated: true
-        shaders:
-            uniforms:
-                u_color: [.5, .5, .5]
-            transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: |
-                    color = u_color;
-                    // if (color[0] == 0.) discard;
-
-    transparent-landuse:
-        extends: polygons
-        animated: true
-        shaders:
-            uniforms:
-                u_color: [.5, .5, .5]
-            transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: |
-                    color = u_color;
-                    // if (color[0] == 0.) discard;
-
-    transparent-water:
-        extends: polygons
-        animated: true
-        shaders:
-            uniforms:
-                u_color: [.5, .5, .5]
-            transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: |
-                    color = u_color;
-                    // if (color[0] == 0.) discard;
-
-    roadshader:
-        extends: polygons
-        animated: true
-        shaders:
-            uniforms:
-                u_color: [.5, .5, .5]
-            transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: |
-                    color = u_color;
-                    // if (color[0] == 0.) discard;
-
-    points:
-        shaders:
-            transforms:
-                # fragment: color += vec3(gl_FragCoord.x / u_resolution.x, 0.0, gl_FragCoord.y / u_resolution.y);
-                fragment: { url: demos/shaders/color_bleed.glsl }
-
 layers:
     earth:
         mode:
-            name: transparent-earth
-        color:
-            default: [.0, .0, .0]
-        outline:
-            color:
-                default: [1, .5, .5]
-            width:
-                default: Style.pixels(5)
+            name: earth-mode
 
     landuse:
         mode:
-            name: transparent-landuse
-        color:
-            default: [.0, .0, .0]
-        outline:
-            color:
-                default: [.5, 1., .5]
-            width:
-                default: Style.pixels(5)
+            name: landuse-mode
 
     water:
         mode:
-            name: transparent-water
-        # interactive: true
-        color:
-            default: [.0, .0, .0]
-            # default: [.5, .5, .5]
-        outline:
-            color:
-                default: [.5, .5, 1]
-            width:
-                default: Style.pixels(5)
-            # width:
-            #     default:
-            #         function (f, t) {
-            #             return (
-            #                 t.coords.z >= 16 &&
-            #                 (f.properties.kind != 'ocean' && f.properties.kind != 'riverbank') &&
-            #                 (2.5 * Math.log(t.coords.z))
-            #             );
-            #         }
+            name: water-mode
 
     roads:
         mode:
-            name: roadshader
-        interactive: function (f, t) { return (t.coords.z >= 18); }
-        color:
-            # default: Style.color.randomColor
-            default: [1, 1, 1]
+            name: roads-mode
         width:
             # default: Style.pixels(5)
-            default: function (f, t) { return 2 * Math.log(t.coords.z); }
-            highway: function (f, t) { return 3 * Math.log(t.coords.z); }
-            major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
-            minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
-            path: function (f, t) { return 1 * Math.log(t.coords.z); }
-            debug: function (f, t) { return 5; }
+            # default: function (f, t) { return 2 * Math.log(t.coords.z); }
+            # highway: function (f, t) { return 3 * Math.log(t.coords.z); }
+            # major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
+            # minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
+            # path: function (f, t) { return 1 * Math.log(t.coords.z); }
 
+            default: 2
+            highway: 20
+            major_road: 10
+            minor_road: 5
+            path: 1
 
     buildings:
         mode:
-            name: transparentbuildings
-        color:
-            default: [0., .0, .0]
-        # extrude:
-            # default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
-        outline:
-            color:
-                default: [1., .5., 1.]
-            width:
-                default: Style.pixels(2)
+            name: buildings-mode
+
+modes:
+    buildings-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.8, .8, .8]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    earth-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.5, .5, .5]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    landuse-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.6, .6, .6]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    water-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.4, .4, .4]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    roads-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [1, 1, 1]
+            transforms:
+                globals:
+                    uniform vec3 u_color;
+                fragment: color = u_color;
 
 
-    pois:
-        mode:
-            name: points
-            # name: formica
-        filter: function (f) { return f.properties.name != null; }
-        visible: false
-        interactive: true
-        # z:
-        #     default: 25
-        color:
-            default: [1, 1, 0]
-        size:
-            # default: 5
-            default: Style.pixels(5)
-            # default: Style.pixels(function(f, t, h) { return 2 * Math.pow(h.zoom, 0.5); })
-            # default: function(f, t, h) { return 2 * h.zoom; }
-
-    # places:
-    #     filter: function(f, t) { return (t.coords.z >= 13); }
-    #     color: {
-    #         # default: [0.0, 1.0, 1.0]
-    #         default: function(f) { return f.properties.kind == 'administrative' ? [1, 0, 1] : [1, 1, 0]; }
-    #     size:
-    #         default: Style.pixels(5)

@@ -4,6 +4,14 @@
         data: 'earth'
     },
     {
+        name: 'water',
+        data: 'water'
+    },
+    {
+        name: 'buildings',
+        data: 'buildings'
+    },
+    {
         name: 'landuse',
         data: function (json) {
             if (!json['landuse'] || !json['landuse'].features) {
@@ -13,14 +21,10 @@
             return {
                 type: 'FeatureCollection',
                 features: json['landuse'].features.sort(function(a, b) {
-                    return (b.properties.area - a.properties.area);
+                    return (b.properties.area - a.properties.area); 
                 })
             };
         }
-    },
-    {
-        name: 'water',
-        data: 'water'
     },
     {
         name: 'roads',
@@ -37,29 +41,4 @@
             };
         }
     },
-    {
-        name: 'buildings',
-        data: 'buildings'
-    },
-    {
-        name: 'pois',
-        data: 'pois'
-        // data: function (json) {
-        //     if (!json['pois'] || !json['pois'].features) {
-        //         return null;
-        //     }
-
-        //     // Only features WITH names
-        //     return {
-        //         type: 'FeatureCollection',
-        //         features: json['pois'].features.filter(function (feature) {
-        //             return (feature.properties.name != null && feature.properties.name != '');
-        //         })
-        //     };
-        // }
-    },
-    // {
-    //     name: 'places',
-    //     data: 'places'
-    // }
 ]

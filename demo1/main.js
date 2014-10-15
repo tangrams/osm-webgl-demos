@@ -331,40 +331,7 @@ console.log("!"+tile_sources[default_tile_source]);
         // #define controls
         addGUIDefines();
 
-        // buildings color
-        gui.buildings = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'buildings');
-        colorchange.onChange(function(value) {
-            scene.modes["transparentbuildings"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
 
-        // earth color
-        gui.earth = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'earth');
-        colorchange.onChange(function(value) {
-            scene.modes["transparent-earth"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
-
-        // landuse color
-        gui.landuse = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'landuse');
-        colorchange.onChange(function(value) {
-            scene.modes["transparent-landuse"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
-
-        // landuse color
-        gui.water = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'water');
-        colorchange.onChange(function(value) {
-            scene.modes["transparent-water"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
-
-        // landuse color
-        gui.roads = [0, 150, 255 ];
-        var colorchange = gui.addColor(gui, 'roads');
-        colorchange.onChange(function(value) {
-            scene.modes["roadshader"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-        });
 
         // Layers
         var layer_gui = gui.addFolder('Layers');
@@ -382,6 +349,8 @@ console.log("!"+tile_sources[default_tile_source]);
                     layer.scene.rebuildTiles();
                 });
         });
+
+        layer_gui.open();
 
     }
 
