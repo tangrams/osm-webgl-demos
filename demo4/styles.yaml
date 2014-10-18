@@ -1,0 +1,46 @@
+layers:
+    cycleway:
+        filter: function (f) { return f.properties.highway == "cycleway"; }
+        color:
+            default: [.8, 0., 0.8]
+        width:
+            default: Style.pixels(5)
+
+    bridges:
+        filter: function (f) { return f.properties.is_bridge == "yes"; }
+        color:
+            default: [.0, 0.8, 0.8]
+        width:
+            default: Style.pixels(10)
+
+    roads:
+        # filter: function (f) { return f.properties.highway != "cycleway"; }
+        # filter: function (f) { return f.properties.highway == "cycleway"; }
+        color:
+            default: [1., 1., 1.]
+            # default: Style.color.pseudoRandomColor
+            # default: Style.color.randomColor
+        width:
+            # default: Style.pixels(2)
+            highway: 20
+            major_road: 10
+            minor_road: 5
+            path: 1
+            cycleway: 10
+
+    buildings:
+        color:
+            default: [.8, .8, .8]
+        filter: function (f) { return f.properties.height > 100; }
+
+    earth:
+        color: 
+            default: [.5, .5, .5]
+
+    landuse:
+        color:
+            default: [.6, .6, .6]
+
+    water:
+        color:
+            default: [.4, .4, .4]
