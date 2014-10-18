@@ -10,7 +10,7 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                url:  'http://localhost:8000/demo2/24640.json'
+                url:  'http://localhost:8000/24640.json'
             },
             layers: 'layers.js',
             styles: 'styles.yaml'
