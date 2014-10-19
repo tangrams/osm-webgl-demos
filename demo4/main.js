@@ -17,6 +17,11 @@
             styles: 'styles.yaml'
         },
     };
+    var locations = {
+        'London': [51.508, -0.105, 15],
+        'New York': [40.70531887544228, -74.00976419448853, 16],
+        'Seattle': [47.609722, -122.333056, 15]
+    };
     var osm_debug = false;
 
     // set tile source
@@ -112,7 +117,7 @@
         gui.roadwidth = 5;
         var roadwidth = gui.add(gui, "roadwidth", 0, 100);
         roadwidth.onFinishChange(function(value) {
-            scene.styles.layers.roads.width.default = "function (f, t, h) { return "+value+"5 * h.Geo.meters_per_pixel[h.zoom]; }";
+            scene.styles.layers.roads.width.default = "function (f, t, h) { return "+value+"; }";
             scene.rebuildTiles();
         });
 
