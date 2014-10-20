@@ -10,7 +10,9 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                url:  'http://localhost:8000/24640.json'
+                // url:  'http://localhost:8000/24640.json'
+                url:  'http://localhost:8000/{y}.json',
+                max_zoom: 16
             },
             layers: 'layers.js',
             styles: 'styles.yaml'
@@ -22,7 +24,7 @@
     default_tile_source = "demo";
 
     // set start location
-    var map_start_location = [40.71186988568351,-74.01727437973024,17]
+    var map_start_location = [40.71186988568351,-74.01727437973024,16]
 
 
     /*** Map ***/
@@ -30,7 +32,7 @@
     var map = L.map('map', {
         maxZoom: 20,
         inertia: false,
-        keyboard: false
+        keyboard: true
     });
     var layer = Tangram.leafletLayer({
         vectorTileSource: tile_sources[default_tile_source].source,
