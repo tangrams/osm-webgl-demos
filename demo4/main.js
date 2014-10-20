@@ -165,14 +165,16 @@
 
         gui.height = 5;
         var height = gui.add(gui, "height", 0, 100);
-        height.onFinishChange(function(value) {
+        // height.onFinishChange(function(value) {
+        height.onChange(function(value) {
             scene.styles.layers.buildings.filter = "function (f) { return f.properties.height > "+value+"; }";
             scene.rebuildTiles();
         });
 
         gui.roadwidth = 5;
         var roadwidth = gui.add(gui, "roadwidth", 0, 100);
-        roadwidth.onFinishChange(function(value) {
+        // roadwidth.onFinishChange(function(value) {
+        roadwidth.onChange(function(value) {
             scene.styles.layers.roads.width.default = "function (f, t, h) { return "+value+"; }";
             scene.rebuildTiles();
         });
