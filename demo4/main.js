@@ -10,7 +10,9 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                // url:  'http://localhost:8000/24640.json'
+                // url:  'http://localhost:8000/demo3/potosi_bolivia.osm-line2.geojson'
+                // url:  'http://localhost:8000/demo3/potosi_bolivia.osm-polygon.geojson'
+                // url:  'http://localhost:8000/demo3/2.json'
                 url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
             },
             layers: 'layers.js',
@@ -24,19 +26,73 @@
     };
     var osm_debug = false;
 
+    /*** URL parsing ***/
+
+    // URL hash pattern is one of:
+    // #[source]
+    // #[lat],[lng],[zoom]
+    // #[source],[lat],[lng],[zoom]
+    // #[source],[location name]
+    var url_hash = window.location.hash.slice(1, window.location.hash.length).split(',');
+
+    // Get tile source from URL
+    if (url_hash.length >= 1 && tile_sources[url_hash[0]] != null) {
+        default_tile_source = url_hash[0];
+    }
+
+    // Get location from URL
+    // var map_start_location = locations['New York'];
+    var map_start_location = locations['London'];
+
+    if (url_hash.length == 3) {
+        map_start_location = url_hash.slice(0, 3);
+    }
+    if (url_hash.length > 3) {
+        map_start_location = url_hash.slice(1, 4);
+    }
+    else if (url_hash.length == 2) {
+        map_start_location = locations[url_hash[1]];
+    }
+
+    if (url_hash.length > 4) {
+        var url_ui = url_hash.slice(4);
+
+        // Mode on URL?
+        var url_mode;
+        if (url_ui) {
+            var re = new RegExp(/mode=(\w+)/);
+            url_ui.forEach(function(u) {
+                var match = u.match(re);
+                url_mode = (match && match.length > 1 && match[1]);
+            });
+        }
+    }
+
     // set tile source
     default_tile_source = "demo";
 
-    // set start location
-    var map_start_location = [40.71186988568351,-74.01727437973024,17]
+    // Put current state on URL
+    function updateURL() {
+        var map_latlng = map.getCenter(),
+            url_options = [default_tile_source, map_latlng.lat, map_latlng.lng, map.getZoom()];
 
+        // if (rS) {
+        //     url_options.push('rstats');
+        // }
+
+        // if (gl_mode_options && gl_mode_options.effect != '') {
+        //     url_options.push('mode=' + gl_mode_options.effect);
+        // }
+
+        window.location.hash = url_options.join(',');
+    }
 
     /*** Map ***/
 
     var map = L.map('map', {
         maxZoom: 20,
         inertia: false,
-        keyboard: true
+        keyboard: false
     });
     var layer = Tangram.leafletLayer({
         vectorTileSource: tile_sources[default_tile_source].source,
@@ -55,7 +111,7 @@
     // Update URL hash on move
     // map.attributionControl.setPrefix('');
     map.setView(map_start_location.slice(0, 2), map_start_location[2]);
-    // map.on('moveend', updateURL);
+    map.on('moveend', updateURL);
 
     // Resize map to window
     function resizeMap() {
