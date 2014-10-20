@@ -1,6 +1,6 @@
 {
   "name": "mozfest-demo",
   "dependencies": {
-    "tangram": "git://github.com/tangrams/tangram.git"
+    "tangram": "git://github.com/tangrams/tangram.git#build_callback"
   }
 }
