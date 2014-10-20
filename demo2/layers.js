@@ -1,34 +1,17 @@
 [
     {
-        name: 'earth',
-        data: 'earth'
+        name: 'earth'
     },
     {
-        name: 'buildings',
-        data: 'buildings'
+        name: 'buildings'
     },
     {
-        name: 'water',
-        data: 'water'
+        name: 'water'
     },
     {
-        name: 'landuse',
-        data: 'landuse'
-        // data: function (json) {
-        //     if (!json['landuse'] || !json['landuse'].features) {
-        //         return null;
-        //     }
-
-        //     return {
-        //         type: 'FeatureCollection',
-        //         features: json['landuse'].features.sort(function(a, b) {
-        //             return (b.properties.area - a.properties.area);
-        //         })
-        //     };
-        // }
+        name: 'landuse'
     },
     {
-        name: 'roads',
-        data: 'roads'
-    },
+        name: 'roads'
+    }
 ]

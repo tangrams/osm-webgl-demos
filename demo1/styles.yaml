@@ -37,7 +37,8 @@ layers:
             color:
                 default: [1, .5, .5]
             width:
-                default: Style.pixels(5)
+                default: Style.pixels(2)
+            tile_edges: true
 
     landuse:
         mode:
@@ -48,7 +49,7 @@ layers:
             color:
                 default: [.5, 1., .5]
             width:
-                default: Style.pixels(5)
+                default: Style.pixels(2)
 
     water:
         mode:
@@ -61,7 +62,8 @@ layers:
             color:
                 default: [.5, .5, 1]
             width:
-                default: Style.pixels(5)
+                default: Style.pixels(2)
+            tile_edges: true
             # width:
             #     default:
             #         function (f, t) {
@@ -98,7 +100,7 @@ layers:
             color:
                 default: [1., .5., 1.]
             width:
-                default: Style.pixels(2)
+                default: Style.pixels(1)
 
 
     pois:

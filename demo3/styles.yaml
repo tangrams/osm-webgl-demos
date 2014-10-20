@@ -1,0 +1,90 @@
+layers:
+    earth:
+        mode:
+            name: earth-mode
+
+    landuse:
+        mode:
+            name: landuse-mode
+
+    water:
+        mode:
+            name: water-mode
+
+    roads:
+        color: 
+            default: [1, 1, 0]
+        mode:
+            name: roads-mode
+        width:
+            # default: Style.pixels(5)
+            # default: function (f, t) { return 2 * Math.log(t.coords.z); }
+            default: Style.zoomMultiplier(50)
+            # highway: Style.zoomMultiplier(10)
+            # highway: function (f, t) { return 10 * Math.log(t.coords.z); }
+            # highway: function (f, t) { return 10 * Math.log(t.coords.z); }
+            # highway: function (f, t) { return 1 * Math.pow(t.coords.z, 2); }
+            # major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
+            # highway: Style.pixels(5)
+            # minor_road: Style.zoomMultiplier(5)
+            # minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
+            # path: function (f, t) { return 1 * Math.log(t.coords.z); }
+
+            # default: 10
+            # highway: 10
+            # major_road: 16
+            # minor_road: 5
+            # path: 1
+
+    buildings:
+        mode:
+            name: buildings-mode
+
+modes:
+    buildings-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.8, .8, .8]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    earth-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.5, .5, .5]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    landuse-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.6, .6, .6]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    water-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.4, .4, .4]
+            transforms:
+                globals: uniform vec3 u_color;
+                fragment: color = u_color;
+
+    roads-mode:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [1, 1, 1]
+            transforms:
+                globals:
+                    uniform vec3 u_color;
+                fragment: color = u_color;
+
+

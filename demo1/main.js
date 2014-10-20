@@ -10,8 +10,8 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                // url:  'http://localhost:8000/24640.json'
-                url:  'http://localhost:8000/{y}.json',
+                url:  'http://localhost:8000/24640.json',
+                // url:  'http://localhost:8000/{z}-{x}-{y}.json',
                 max_zoom: 16
             },
             layers: 'layers.js',
@@ -30,7 +30,8 @@
     /*** Map ***/
 
     var map = L.map('map', {
-        maxZoom: 20,
+        minZoom: 17,
+        maxZoom: 17,
         inertia: false,
         keyboard: true
     });
@@ -40,7 +41,7 @@
         vectorStyles: tile_sources[default_tile_source].styles,
         numWorkers: 2,
         // debug: true,
-        attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangram-map/tangram">Source Code</a>',
+        attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangram/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
     });
