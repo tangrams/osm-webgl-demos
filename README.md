@@ -15,4 +15,4 @@ Then navigate in a WebGL-supporting browser to: [http://localhost:8000](http://l
 
 List of WebGL-supporting browsers: [http://caniuse.com/#feat=webgl](http://caniuse.com/#feat=webgl)
 
-Check if your browser supports WebGL: [http://get.webgl.org/](get.webgl.org)
+Check if your browser supports WebGL: [http://get.webgl.org/](http://get.webgl.org)
