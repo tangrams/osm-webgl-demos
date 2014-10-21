@@ -1,3 +1,7 @@
+camera:
+    type: perspective
+    vanishing_point: [-.25, -.75] # slightly off-center viewing angle, towards lower-left of screen
+
 layers:
     cycleway:
         filter: function (f) { return f.properties.highway == "cycleway"; }
@@ -43,7 +47,9 @@ layers:
             #     }
         filter: function (f) { return f.properties.height > 5; }
         extrude:
-            default: function (f, t) { return ((t.coords.z >= 14 && f.properties.height > 20) || t.coords.z >= 16) }
+            default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
+        # extrude:
+        #     default: function (f, t) { return ((t.coords.z >= 14 && f.properties.height > 20) || t.coords.z >= 16) }
 
     earth:
         color: 
@@ -61,11 +67,16 @@ modes:
     buildings:
         extends: polygons
         shaders:
+            defines:
+                LIGHTING_DIRECTION: true
             uniforms:
+                u_height: 0
                 u_color_height: 0
             transforms:
                 globals: |
+                    uniform float u_height;
                     uniform float u_color_height;
+                vertex: position.z *= u_height * .01;
                 fragment: |
-                    if (v_world_position.z > u_color_height) color = vec3(.8);
-                    else color = vec3(.5);
+                    if (v_world_position.z > u_color_height) color = lighting * vec3(.8);
+                    else color = lighting * vec3(.5);

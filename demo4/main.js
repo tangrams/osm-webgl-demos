@@ -10,9 +10,6 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                // url:  'http://localhost:8000/demo3/potosi_bolivia.osm-line2.geojson'
-                // url:  'http://localhost:8000/demo3/potosi_bolivia.osm-polygon.geojson'
-                // url:  'http://localhost:8000/demo3/2.json'
                 url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
             },
             layers: 'layers.js',
@@ -24,7 +21,9 @@
         'New York': [40.70531887544228, -74.00976419448853, 16],
         'Seattle': [47.609722, -122.333056, 15]
     };
-    var osm_debug = false;
+
+    // GUI options for #define-based effects
+    Tangram.GLProgram.defines["lighting"] = "LIGHTING_POINT";
 
     /*** URL parsing ***/
 
@@ -70,19 +69,11 @@
 
     // set tile source
     default_tile_source = "demo";
-
+    
     // Put current state on URL
     function updateURL() {
         var map_latlng = map.getCenter(),
             url_options = [default_tile_source, map_latlng.lat, map_latlng.lng, map.getZoom()];
-
-        // if (rS) {
-        //     url_options.push('rstats');
-        // }
-
-        // if (gl_mode_options && gl_mode_options.effect != '') {
-        //     url_options.push('mode=' + gl_mode_options.effect);
-        // }
 
         window.location.hash = url_options.join(',');
     }
@@ -163,14 +154,20 @@
                 });
         });
 
-        gui["geo height"] = 0;
-        var geoheight = gui.add(gui, "geo height", 0, 150);
+        gui["building height"] = 0;
+        var bheight = gui.add(gui, "building height", 0, 150);
+        bheight.onChange(function(value) {
+            scene.styles.modes.buildings.shaders.uniforms.u_height = value;
+            scene.requestRedraw();
+        });
+        gui["geo filter"] = 0;
+        var geoheight = gui.add(gui, "geo filter", 0, 150);
         geoheight.onChange(function(value) {
             scene.styles.layers.buildings.filter = "function (f) { return f.properties.height > "+value+"; }";
             scene.rebuildTiles();
         });
-        gui["shader height"] = 0;
-        var height = gui.add(gui, "shader height", 0, 150);
+        gui["shader filter"] = 0;
+        var height = gui.add(gui, "shader filter", 0, 150);
         height.onChange(function(value) {
             // this.uniforms.u_color_height = value;
             scene.styles.modes.buildings.shaders.uniforms.u_color_height = value;
@@ -214,20 +211,9 @@
         layer.on('init', function() {
             addGUI();
 
-            // setGLProgramDefines();
             scene.refreshModes();
-            // updateURL();
         });
         layer.addTo(map);
-
-        if (osm_debug == true) {
-            window.osm_layer =
-                L.tileLayer(
-                    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    { opacity: 0.5 })
-                .bringToFront()
-                .addTo(map);
-        }
 
         frame();
     });
