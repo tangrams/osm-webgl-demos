@@ -37,7 +37,7 @@ layers:
             name: buildings
         filter: function (f) { return f.properties.height > 5; }
         extrude:
-            default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
+            default: true
 
     earth:
         color: 
