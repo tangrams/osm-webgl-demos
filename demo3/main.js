@@ -24,7 +24,6 @@
         'New York': [40.70531887544228, -74.00976419448853, 16],
         'Seattle': [47.609722, -122.333056, 15]
     };
-    var osm_debug = false;
 
     /*** URL parsing ***/
 
@@ -196,15 +195,6 @@
             updateURL();
         });
         layer.addTo(map);
-
-        if (osm_debug == true) {
-            window.osm_layer =
-                L.tileLayer(
-                    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    { opacity: 0.5 })
-                .bringToFront()
-                .addTo(map);
-        }
 
         frame();
     });

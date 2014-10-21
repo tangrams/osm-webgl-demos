@@ -18,7 +18,6 @@
             styles: 'styles.yaml'
         },
     };
-    var osm_debug = false;
 
     // set tile source
     default_tile_source = "demo";
@@ -114,15 +113,6 @@
             addGUI();
         });
         layer.addTo(map);
-
-        if (osm_debug == true) {
-            window.osm_layer =
-                L.tileLayer(
-                    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    { opacity: 0.5 })
-                .bringToFront()
-                .addTo(map);
-        }
 
         frame();
     });
