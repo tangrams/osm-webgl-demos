@@ -169,15 +169,6 @@
             scene.styles.layers.buildings.filter = "function (f) { return f.properties.height > "+value+"; }";
             scene.rebuildTiles();
         });
-
-        // gui.height2 = 5;
-        // var height2 = gui.add(gui, "height2", 0, 100);
-        // height2.onChange(function(value) {
-        //     var v = value/100.;
-        //     scene.styles.layers.buildings.color.default = JSON.parse("["+v+", "+v+", "+v+"]");
-        //     scene.rebuildTiles();
-        // });
-
         gui["shader height"] = 0;
         var height = gui.add(gui, "shader height", 0, 150);
         height.onChange(function(value) {
