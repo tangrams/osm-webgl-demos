@@ -78,9 +78,9 @@ layers:
         interactive: function (f, t) { return (t.coords.z >= 18); }
         color:
             # default: Style.color.randomColor
-            default: [1, 1, 1]
+            default: [1, 1, 0]
         width:
-            # default: Style.pixels(5)
+            # default: Style.pixels(15)
             default: function (f, t) { return 2 * Math.log(t.coords.z); }
             highway: function (f, t) { return 3 * Math.log(t.coords.z); }
             major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
