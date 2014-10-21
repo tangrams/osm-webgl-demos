@@ -35,21 +35,9 @@ layers:
     buildings:
         mode:
             name: buildings
-        color:
-            default: [.8, .8, .8]
-            # default: |
-            #     function (f) {
-            #         var c = [.8, .8, .8];
-            #         if (f.properties.name || f.properties.kind) {
-            #             c = [1, .3, .3];
-            #         }
-            #         return c;
-            #     }
         filter: function (f) { return f.properties.height > 5; }
         extrude:
             default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
-        # extrude:
-        #     default: function (f, t) { return ((t.coords.z >= 14 && f.properties.height > 20) || t.coords.z >= 16) }
 
     earth:
         color: 

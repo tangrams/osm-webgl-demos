@@ -23,7 +23,7 @@
     };
 
     // GUI options for #define-based effects
-    Tangram.GLProgram.defines["lighting"] = "LIGHTING_POINT";
+    // Tangram.GLProgram.defines["lighting"] = "LIGHTING_POINT";
 
     /*** URL parsing ***/
 
