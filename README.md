@@ -5,11 +5,13 @@ A series of demonstrations showing how OpenStreetMap vector data can be displaye
 
 ### Installation
 
-Copy these files into a directory and start a webserver in that directory.
+1. Copy this repository into a directory
+ * with git: `git clone https://github.com/tangrams/osm-webgl-demos.git`
+ * or download the zip: [http://tiny.cc/osmwebgl](http://tiny.cc/osmwebgl)
 
-Easy python server:
+2. Start a webserver in that directory.
 
-    python -m SimpleHTTPServer 8000
+ * Easy python server: `python -m SimpleHTTPServer 8000`
 
 Then navigate in a WebGL-supporting browser to: [http://localhost:8000](http://localhost:8000)
 
