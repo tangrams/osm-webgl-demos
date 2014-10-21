@@ -78,7 +78,7 @@ layers:
         interactive: function (f, t) { return (t.coords.z >= 18); }
         color:
             # default: Style.color.randomColor
-            default: [1, 1, 0]
+            default: [1, 1, 1]
         width:
             # default: Style.pixels(15)
             default: function (f, t) { return 2 * Math.log(t.coords.z); }

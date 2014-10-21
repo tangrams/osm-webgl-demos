@@ -10,9 +10,9 @@
         'demo': {
             source: {
                 type: 'GeoJSONTileSource',
-                url:  'http://localhost:8000/24640.json',
-                // url:  'http://localhost:8000/{z}-{x}-{y}.json',
-                // max_zoom: 16
+                // url:  'http://localhost:8000/24640.json',
+                url:  'http://localhost:8000/{z}-{x}-{y}.json',
+                max_zoom: 16
             },
             layers: 'layers.yaml',
             styles: 'styles.yaml'
@@ -32,7 +32,7 @@
         minZoom: 17,
         maxZoom: 17,
         inertia: false,
-        keyboard: true
+        keyboard: false
     });
     var layer = Tangram.leafletLayer({
         vectorTileSource: tile_sources[default_tile_source].source,
