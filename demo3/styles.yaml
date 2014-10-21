@@ -17,24 +17,12 @@ layers:
         mode:
             name: roads-mode
         width:
-            # default: Style.pixels(5)
-            # default: function (f, t) { return 2 * Math.log(t.coords.z); }
-            default: Style.zoomMultiplier(50)
-            # highway: Style.zoomMultiplier(10)
-            # highway: function (f, t) { return 10 * Math.log(t.coords.z); }
-            # highway: function (f, t) { return 10 * Math.log(t.coords.z); }
-            # highway: function (f, t) { return 1 * Math.pow(t.coords.z, 2); }
-            # major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
-            # highway: Style.pixels(5)
-            # minor_road: Style.zoomMultiplier(5)
-            # minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
-            # path: function (f, t) { return 1 * Math.log(t.coords.z); }
-
-            # default: 10
-            # highway: 10
-            # major_road: 16
-            # minor_road: 5
-            # path: 1
+            # default: Style.pixels(2)
+            default: 10
+            highway: 10
+            major_road: 16
+            minor_road: 5
+            path: 1
 
     buildings:
         mode:

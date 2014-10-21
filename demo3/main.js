@@ -91,7 +91,7 @@
     var map = L.map('map', {
         maxZoom: 20,
         inertia: false,
-        keyboard: false
+        keyboard: true
     });
     var layer = Tangram.leafletLayer({
         vectorTileSource: tile_sources[default_tile_source].source,
