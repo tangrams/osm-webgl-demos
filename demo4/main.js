@@ -41,8 +41,8 @@
     }
 
     // Get location from URL
-    // var map_start_location = locations['New York'];
-    var map_start_location = locations['London'];
+    var map_start_location = locations['New York'];
+    // var map_start_location = locations['London'];
 
     if (url_hash.length == 3) {
         map_start_location = url_hash.slice(0, 3);
@@ -163,12 +163,27 @@
                 });
         });
 
-        gui.height = 5;
-        var height = gui.add(gui, "height", 0, 100);
-        // height.onFinishChange(function(value) {
-        height.onChange(function(value) {
+        gui["geo height"] = 0;
+        var geoheight = gui.add(gui, "geo height", 0, 150);
+        geoheight.onChange(function(value) {
             scene.styles.layers.buildings.filter = "function (f) { return f.properties.height > "+value+"; }";
             scene.rebuildTiles();
+        });
+
+        // gui.height2 = 5;
+        // var height2 = gui.add(gui, "height2", 0, 100);
+        // height2.onChange(function(value) {
+        //     var v = value/100.;
+        //     scene.styles.layers.buildings.color.default = JSON.parse("["+v+", "+v+", "+v+"]");
+        //     scene.rebuildTiles();
+        // });
+
+        gui["shader height"] = 0;
+        var height = gui.add(gui, "shader height", 0, 150);
+        height.onChange(function(value) {
+            // this.uniforms.u_color_height = value;
+            scene.styles.modes.buildings.shaders.uniforms.u_color_height = value;
+            scene.requestRedraw();
         });
 
         gui.roadwidth = 5;
