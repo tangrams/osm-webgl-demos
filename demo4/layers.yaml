@@ -1,0 +1,9 @@
+- name: earth
+- name: landuse
+- name: water
+- name: cycleway
+  data: roads
+- name: bridges
+  data: roads
+- name: buildings
+- name: pois

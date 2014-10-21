@@ -13,6 +13,16 @@
         rS;
 
     var tile_sources = {
+        'demo': {
+            source: {
+                type: 'GeoJSONTileSource',
+                // url:  'http://localhost:8000/24640.json',
+                url:  'http://localhost:8000/{z}-{x}-{y}.json',
+                // url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
+            },
+            layers: 'layers.yaml',
+            styles: 'styles.yaml'
+        },
         'mapzen': {
             source: {
                 type: 'GeoJSONTileSource',
