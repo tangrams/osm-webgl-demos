@@ -21,17 +21,6 @@ modes:
                 fragment:
                     url: shaders/noise.glsl
 
-    formica:
-        extends: polygons
-        shaders:
-            defines:
-                EFFECT_NOISE_TEXTURE: true
-            transforms:
-                globals:
-                    url: shaders/glsl-noise-periodic-3d.glsl
-                fragment:
-                    url: shaders/noise.glsl
-
     colorbleed:
         extends: polygons
         animated: true
@@ -341,8 +330,8 @@ layers:
     landuse:
         interactive: true
         color:
-            default: [0.5, 0.5, 0.5]
-            # pitch: [0.3, 0.675, 0.3]
+            # default: [0.5, 0.5, 0.5]
+            default: [.5, .9, 0.5]
         # outline:
         #     color:
         #         default: [0, .7, 0]
@@ -373,8 +362,8 @@ layers:
         interactive: function (f, t) { return (t.coords.z >= 18); }
         color:
             # default: Style.color.randomColor
-            # default: [0.4, 0.4, 0.4]
-            highway: [1.0, .0, 1.0]
+            default: [0.4, 0.4, 0.4]
+            # highway: [1.0, .0, 1.0]
             major_road: [0.5, 0.5, 0.5]
             minor_road: [0.65, 0.65, 0.65]
             path: [0.8, 0.8, 0.8]
@@ -387,8 +376,7 @@ layers:
             minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
             path: function (f, t) { return 1 * Math.log(t.coords.z); }
             debug: function (f, t) { return 5; }
-        # z:
-        #     path: 25
+
         outline:
             color:
                 default: [0.1, 0.7, 0.7]
@@ -411,22 +399,11 @@ layers:
         # filter: function (f) { return Math.random() < 0.25; }
         interactive: true
         color:
-            default: [.6, .6, .6]
+            # default: [.6, .6, .6]
             # default: function(f) { var h = f.properties.height || 20; h = Math.min((h + 50) / 250, 1.0); return [h, h, h]; } // shade based on height
             # default: Style.color.randomColor
             # default: Style.color.pseudoRandomColor
-            # default: function (f) { if (f.properties.name || f.properties.kind) { return [(f.properties.name && 0.6) || 0.2, 0.2, (f.properties.kind && 0.6) || 0.2]; } else { return [0.6, 0.6, 0.6] }; }
-        outline:
-            color:
-                default: |
-                    function (f) {
-                        var c = [0, 0, 0];
-                        if (f.properties.name || f.properties.kind) {
-                            c = [1, .3, .3];
-                        }
-                        return c;
-                    }
-
+            default: function (f) { if (f.properties.name || f.properties.kind) { return [(f.properties.name && 0.6) || 0.2, 0.2, (f.properties.kind && 0.6) || 0.2]; } else { return [0.6, 0.6, 0.6] }; }
         extrude:
             default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
 
