@@ -11,7 +11,8 @@ A series of demonstrations showing how OpenStreetMap vector data can be displaye
 
 2. Start a webserver in that directory.
 
- * Easy python server: `python -m SimpleHTTPServer 8000`
+ * Easy python server, python version 2.x: `python -m SimpleHTTPServer 8000`
+ * Easy python server, python version 3.x: `python -m http.server 8000`
 
 Then navigate in a WebGL-supporting browser to: [http://localhost:8000](http://localhost:8000)
 
