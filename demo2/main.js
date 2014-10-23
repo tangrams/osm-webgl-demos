@@ -1,57 +1,30 @@
-/*jslint browser: true*/
-/*global Tangram, gui */
-
 (function () {
 
-    // default source, can be overriden by URL
-    var default_tile_source = 'demo';
-
-    var tile_sources = {
-        'demo': {
-            source: {
-                type: 'GeoJSONTileSource',
-                // url:  'http://localhost:8000/24640.json',
-                url:  'http://localhost:8000/{z}-{x}-{y}.json',
-                max_zoom: 16
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-    };
-
-    // set tile source
-    default_tile_source = "demo";
-
-    // set start location
-    var map_start_location = [40.71186988568351,-74.01727437973024,17]
-
-
-    /*** Map ***/
-
+    // Leaflet map
     var map = L.map('map', {
         minZoom: 17,
         maxZoom: 17,
         inertia: false,
-        keyboard: false
+        keyboard: false,
+        zoomControl: false
     });
+    map.setView([40.71186988568351, -74.01727437973024], 17);
+
+    // Tangram layer
     var layer = Tangram.leafletLayer({
-        vectorTileSource: tile_sources[default_tile_source].source,
-        vectorLayers: tile_sources[default_tile_source].layers,
-        vectorStyles: tile_sources[default_tile_source].styles,
-        numWorkers: 2,
-        // debug: true,
+        vectorTileSource: {
+            type: 'GeoJSONTileSource',
+            url:  'http://localhost:8000/{z}-{x}-{y}.json',
+            max_zoom: 16
+        },
+        vectorLayers: 'layers.yaml',
+        vectorStyles: 'styles.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
     });
-
     var scene = layer.scene;
     window.scene = scene;
-
-    // Update URL hash on move
-    // map.attributionControl.setPrefix('');
-    map.setView(map_start_location.slice(0, 2), map_start_location[2]);
-    // map.on('moveend', updateURL);
 
     // Resize map to window
     function resizeMap() {
@@ -59,20 +32,18 @@
         document.getElementById('map').style.height = window.innerHeight + 'px';
         map.invalidateSize(false);
     }
-
     window.addEventListener('resize', resizeMap);
     resizeMap();
 
     // Create dat GUI
-    var gui = new dat.GUI();
     function addGUI () {
-        gui.domElement.parentNode.style.zIndex = 5;
-        window.gui = gui;
+        var gui = new dat.GUI();
+        gui.domElement.parentNode.style.zIndex = 5; // make sure GUI is on top of map
 
         // add color controls for each layer
         var layer_controls = {};
-        layer.scene.layers.forEach(function(l) {
-            if (layer.scene.styles.layers[l.name] == null) {
+        scene.layers.forEach(function(l) {
+            if (scene.styles.layers[l.name] == null) {
                 return;
             }
 
@@ -86,60 +57,31 @@
                 });
         });
 
-        // add visibility togggles for each layer, in a folder
+        // add visibility toggles for each layer, in a folder
         var layer_gui = gui.addFolder('Layers');
         var layer_controls = {};
-        layer.scene.layers.forEach(function(l) {
-            if (layer.scene.styles.layers[l.name] == null) {
+        scene.layers.forEach(function(l) {
+            if (scene.styles.layers[l.name] == null) {
                 return;
             }
 
-            layer_controls[l.name] = !(layer.scene.styles.layers[l.name].visible == false);
+            layer_controls[l.name] = !(scene.styles.layers[l.name].visible == false);
             layer_gui.
                 add(layer_controls, l.name).
                 onChange(function(value) {
-                    layer.scene.styles.layers[l.name].visible = value;
-                    layer.scene.rebuildTiles();
+                    scene.styles.layers[l.name].visible = value;
+                    scene.rebuildTiles();
                 });
         });
-
     }
 
-    function animationFrame(cb) {
-        if (typeof window.requestAnimationFrame === 'function') {
-            return window.requestAnimationFrame;
-        } else {
-            return window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame    ||
-                window.oRequestAnimationFrame      ||
-                window.msRequestAnimationFrame     ||
-                function (cb) {
-                    setTimeout(cb, 1000 /60);
-                };
-        }
-    }
-
-    function frame () {
-
-        layer.render();
-
-        animationFrame()(frame);
-    }
-
-    /***** Render loop *****/
+    // Add map
     window.addEventListener('load', function () {
         // Scene initialized
         layer.on('init', function() {
             addGUI();
-
-            // setGLProgramDefines();
-            scene.refreshModes();
-            // updateURL();
         });
         layer.addTo(map);
-
-        frame();
     });
-
 
 }());
