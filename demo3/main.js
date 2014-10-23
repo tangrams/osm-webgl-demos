@@ -91,7 +91,7 @@
                 add(layer_controls, l.name).
                 onChange(function(value) {
                     scene.styles.layers[l.name].visible = value;
-                    scene.rebuildTiles();
+                    scene.rebuild();
                 });
         });
 

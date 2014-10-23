@@ -7,29 +7,33 @@ lighting:
 
 layers:
     cycleway:
-        filter: function (f) { return f.properties.highway == "cycleway"; }
+        filter: function () { return feature.highway == "cycleway"; }
         color:
             default: [.8, 0, 0.8]
         width:
             default: Style.pixels(5)
 
     bridges:
-        filter: function (f) { return f.properties.is_bridge == "yes"; }
+        filter: function () { return feature.is_bridge == "yes"; }
         color:
             default: [0, 0.8, 0.8]
         width:
             default: Style.pixels(10)
 
     roads:
+        properties:
+            width: 2
         color:
             default: [1, 1, 1]
         width:
-            default: 2
+            default: function () { return properties.width; }
 
     buildings:
         mode:
             name: buildings
-        filter: function (f) { return f.properties.height > 5; }
+        properties:
+            min_height: 5
+        filter: function () { return feature.height > properties.min_height; }
         extrude:
             default: true
 

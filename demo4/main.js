@@ -74,7 +74,7 @@
                 add(layer_controls, l.name).
                 onChange(function(value) {
                     scene.styles.layers[l.name].visible = value;
-                    scene.rebuildTiles();
+                    scene.rebuild();
                 });
         });
 
@@ -87,8 +87,8 @@
         gui["geo filter"] = 0;
         var geoheight = gui.add(gui, "geo filter", 0, 150);
         geoheight.onChange(function(value) {
-            scene.styles.layers.buildings.filter = "function (f) { return f.properties.height > "+value+"; }";
-            scene.rebuildTiles();
+            scene.styles.layers.buildings.properties.min_height = value;
+            scene.rebuild();
         });
         gui["shader filter"] = 0;
         var height = gui.add(gui, "shader filter", 0, 150);
@@ -101,8 +101,8 @@
         var roadwidth = gui.add(gui, "roadwidth", 0, 100);
         // roadwidth.onFinishChange(function(value) {
         roadwidth.onChange(function(value) {
-            scene.styles.layers.roads.width.default = "function (f, t, h) { return "+value+"; }";
-            scene.rebuildTiles();
+            scene.styles.layers.roads.properties.width = value;
+            scene.rebuild();
         });
 
     }
