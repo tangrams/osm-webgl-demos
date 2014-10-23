@@ -1,31 +1,9 @@
-camera:
-    type: perspective
-    # focal_length: 1
-    focal_length: [[16, 2], [17, 2.5], [18, 3], [19, 4], [20, 6]] # pairs of [zoom, focal len]
-    vanishing_point: [-.25, -.25] # slightly off-center viewing angle, towards lower-left of screen
-
-    # type: isometric
-    # axis: [1, .5]
-
-    # type: flat
-
 modes:
-    # note: consider this syntax as a special case for global mode settings
-    # all:
-    #     shaders:
-    #         transforms:
-    #             fragment: { url: demos/shaders/spotlight.glsl }
-
     transparent:
         extends: polygons
-
         shaders:
             transforms:
-                fragment: if (color[0] == 0.) discard;
-                # fragment: color = vec3(.3, .8, .3);
-                # fragcolor: if (color[0] == 1.) gl_FragColor = vec4(color, .1);
-                # fragcolor: gl_FragColor = vec4(color, .2);
-                # fragcolor: gl_FragColor = vec4(color, 1.0);
+                fragment: if (color == vec3(0.)) discard;
 
 layers:
     earth:
@@ -54,69 +32,31 @@ layers:
     water:
         mode:
             name: transparent
-        # interactive: true
         color:
             default: [.0, .0, .0]
-            # default: [.5, .5, .5]
         outline:
             color:
                 default: [.5, .5, 1]
             width:
                 default: Style.pixels(2)
             tile_edges: true
-            # width:
-            #     default:
-            #         function (f, t) {
-            #             return (
-            #                 t.coords.z >= 16 &&
-            #                 (f.properties.kind != 'ocean' && f.properties.kind != 'riverbank') &&
-            #                 (2.5 * Math.log(t.coords.z))
-            #             );
-            #         }
 
     roads:
-        interactive: function (f, t) { return (t.coords.z >= 18); }
         color:
-            # default: Style.color.randomColor
             default: [1, 1, 1]
         width:
-            # default: Style.pixels(15)
-            default: function (f, t) { return 2 * Math.log(t.coords.z); }
-            highway: function (f, t) { return 3 * Math.log(t.coords.z); }
-            major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
-            minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
-            path: function (f, t) { return 1 * Math.log(t.coords.z); }
-            debug: function (f, t) { return 5; }
-
+            highway: 10
+            major_road: 7
+            minor_road: 5
+            path: 3
 
     buildings:
         mode:
             name: transparent
         color:
             default: [0., .0, .0]
-        # extrude:
-            # default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
         outline:
             color:
                 default: [1., .5., 1.]
             width:
                 default: Style.pixels(1)
-
-
-    pois:
-        mode:
-            name: points
-            # name: formica
-        filter: function (f) { return f.properties.name != null; }
-        visible: false
-        interactive: true
-        # z:
-        #     default: 25
-        color:
-            default: [1, 1, 0]
-        size:
-            # default: 5
-            default: Style.pixels(5)
-            # default: Style.pixels(function(f, t, h) { return 2 * Math.pow(h.zoom, 0.5); })
-            # default: function(f, t, h) { return 2 * h.zoom; }
-
