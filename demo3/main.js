@@ -11,7 +11,7 @@
     if (url_hash.length == 3) {
         map_start_location = url_hash.slice(0, 3);
     }
-    else if (url_hash.length == 1) {
+    else if (url_hash.length == 1 && url_hash != "") {
         map_start_location = locations[url_hash[0]];
     }
 
