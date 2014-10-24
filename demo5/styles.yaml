@@ -2,6 +2,9 @@ camera:
     type: perspective
     vanishing_point: [-.25, -.75] # slightly off-center viewing angle, towards lower-left of screen
 
+lighting:
+    type: diffuse
+
 modes:
     # note: consider this syntax as a special case for global mode settings
     # all:
@@ -350,16 +353,16 @@ layers:
         #         default: [0.6, 0.6, 0.975]
         #     width:
         #         default:
-        #             function (f, t) {
+        #             function () {
         #                 return (
-        #                     t.coords.z >= 16 &&
-        #                     (f.properties.kind != 'ocean' && f.properties.kind != 'riverbank') &&
-        #                     (2.5 * Math.log(t.coords.z))
+        #                     zoom >= 16 &&
+        #                     (feature.kind != 'ocean' && feature.kind != 'riverbank') &&
+        #                     (2.5 * Math.log(zoom))
         #                 );
         #             }
 
     roads:
-        interactive: function (f, t) { return (t.coords.z >= 18); }
+        interactive: function () { return (zoom >= 18); }
         color:
             # default: Style.color.randomColor
             default: [0.4, 0.4, 0.4]
@@ -370,47 +373,47 @@ layers:
             rail: [0.5, 0.0, 0.0]
         width:
             # default: Style.pixels(5)
-            default: function (f, t) { return 2 * Math.log(t.coords.z); }
-            highway: function (f, t) { return 3 * Math.log(t.coords.z); }
-            major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
-            minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
-            path: function (f, t) { return 1 * Math.log(t.coords.z); }
-            debug: function (f, t) { return 5; }
+            default: function () { return 2 * Math.log(zoom); }
+            highway: function () { return 3 * Math.log(zoom); }
+            major_road: function () { return 2.5 * Math.log(zoom); }
+            minor_road: function () { return 2 * Math.log(zoom); }
+            path: function () { return 1 * Math.log(zoom); }
+            debug: function () { return 5; }
 
         outline:
             color:
                 default: [0.1, 0.7, 0.7]
             width:
                 default:
-                    function (f, t) { return (t.coords.z >= 18 && (2/8 * Math.log(t.coords.z))); }
+                    function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
                 highway:
-                    function (f, t) { return (t.coords.z >= 18 && (3/8 * Math.log(t.coords.z))); }
+                    function () { return (zoom >= 18 && (3/8 * Math.log(zoom))); }
                 major_road:
-                    function (f, t) { return (t.coords.z >= 18 && (2.5/8 * Math.log(t.coords.z))); }
+                    function () { return (zoom >= 18 && (2.5/8 * Math.log(zoom))); }
                 minor_road:
-                    function (f, t) { return (t.coords.z >= 18 && (2/8 * Math.log(t.coords.z))); }
+                    function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
                 path:
-                    function (f, t) { return (t.coords.z >= 18 && (2/8 * Math.log(t.coords.z))); }
+                    function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
                 debug:
-                    function (f, t) { return (t.coords.z >= 18 && (2/8 * Math.log(t.coords.z))); }
+                    function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
 
     buildings:
-        # filter: function (f) { return f.properties.name != null; }
-        # filter: function (f) { return Math.random() < 0.25; }
+        # filter: function () { return feature.name != null; }
+        # filter: function () { return Math.random() < 0.25; }
         interactive: true
         color:
             # default: [.6, .6, .6]
-            # default: function(f) { var h = f.properties.height || 20; h = Math.min((h + 50) / 250, 1.0); return [h, h, h]; } // shade based on height
+            # default: function() { var h = feature.height || 20; h = Math.min((h + 50) / 250, 1.0); return [h]; } // shade based on height
             # default: Style.color.randomColor
             # default: Style.color.pseudoRandomColor
-            default: function (f) { if (f.properties.name || f.properties.kind) { return [(f.properties.name && 0.6) || 0.2, 0.2, (f.properties.kind && 0.6) || 0.2]; } else { return [0.6, 0.6, 0.6] }; }
+            default: function () { if (feature.name || feature.kind) { return [(feature.name && 0.6) || 0.2, 0.2, (feature.kind && 0.6) || 0.2]; } else { return [0.6, 0.6, 0.6] }; }
         extrude:
-            default: function (f, t) { return ((t.coords.z >= 15 && f.properties.height > 20) || t.coords.z >= 16) }
+            default: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
 
     pois:
         mode:
             name: points
-        filter: function (f) { return f.properties.name != null; }
+        filter: function () { return feature.name != null; }
         # visible: false
         interactive: true
         color:
@@ -418,6 +421,6 @@ layers:
         size:
             # default: 5
             default: Style.pixels(5)
-            # default: Style.pixels(function(f, t, h) { return 2 * Math.pow(h.zoom, 0.5); })
-            # default: function(f, t, h) { return 2 * h.zoom; }
+            # default: Style.pixels(function() { return 2 * Math.pow(zoom, 0.5); })
+            # default: function() { return 2 * zoom; }
 
