@@ -6,6 +6,7 @@ body {
     font-size: 1.5em;
     background-color:#444;
     color:white;
+    margin: 0;
 }
 a { color:white; }
 a:visited { color:#999; }
@@ -19,7 +20,7 @@ div {
     background-color:black;
 }
 #main {
-    width:100%;
+    width:60%;
     margin: -1em 20% 2em;
 }
 #footer {
@@ -33,6 +34,7 @@ div {
 <body>
 
 <div id="header"><h1>New-School Maps</h1><h2>with OpenStreetMap and WebGL</h2>
+<a href="http://tiny.cc/osmwebgl">http://tiny.cc/osmwebgl</a><br>
 </div>
 
 
@@ -48,33 +50,33 @@ div {
 
 <h2>OpenStreetMap links:</h2>
 <ul>
-<li><a href="http://www.openstreetmap.org/">OpenStreetMap</a></li>
-<li><a href="http://osmlab.github.io/show-me-the-way/">Live OSM updates</a></li>
-<li><a href="https://www.mapbox.com/osm-data-report/">Mapbox's 2013 OSM report</a></li>
+<li><a href="http://www.openstreetmap.org/">OpenStreetMap</a> (the source of all the data)</li>
+<li><a href="http://osmlab.github.io/show-me-the-way/">Live OSM updates</a> (actually slightly delayed)</li>
+<li><a href="https://www.mapbox.com/osm-data-report/">Mapbox's 2013 OSM report</a> (an excellent overview)</li>
 </ul>
 <h2>GeoJSON & data links:</h2>
 <ul>
-<li><a href="http://taginfo.openstreetmap.org/">taginfo.openstreetmap.org</a></li>
-<li><a href="http://wiki.openstreetmap.org/wiki/Query-to-map">Query-to-map</a></li>
+<li><a href="http://taginfo.openstreetmap.org/">taginfo.openstreetmap.org</a> (fascinating view of OSM tag usage)</li>
 <li><a href="http://jsoneditoronline.org">JSON browser/formatter</a></li>
-<li><a href="https://github.com/mapzen/vector-datasource/blob/master/tilestache.cfg">Mapzen's Tilestache layer definitions</a></li>
+<li><a href="https://github.com/mapzen/vector-datasource/blob/master/tilestache.cfg">Mapzen's Tilestache layer definitions</a> (OSM data formatting example)</li>
 </ul>
 <h2>WebGL links:</h2>
 <ul>
-<li><a href="http://github.com/tangrams/tangram">Tangram</a></li>
-<li><a href="https://mapzen.com/blog/tangram-a-mapping-library">Tangram overview</a></li>
+<li><a href="http://github.com/tangrams/tangram">Tangram</a> (the library used to draw these maps)</li>
+<li><a href="https://mapzen.com/blog/tangram-a-mapping-library">Tangram overview</a> (a blog post)</li>
 <li><a href="https://www.mapbox.com/mapbox-gl-js/api/">Mapbox GL JS</a></li>
 <li><a href="http://caniuse.com/#feat=webgl">WebGL-supporting browsers</a></li>
 </ul>
 
 <h2>Other links:</h2>
 <ul>
-<li><a href="http://www.propublica.org/nerds/item/how-we-made-the-3-d-new-york-city-flood-map">ProPublica: How We Made the 3-D New York City Flood Map</a></li>
-<li><a href="http://io.morphocode.com/urban-layers/">Morphocode's Urban Layers map</a></li>
+<li><a href="http://www.propublica.org/nerds/item/how-we-made-the-3-d-new-york-city-flood-map">ProPublica: How We Made the 3-D New York City Flood Map</a> (an example of the hard way)</li>
+<li><a href="http://io.morphocode.com/urban-layers/">Morphocode's Urban Layers map</a> (a fancy map made with TIGER data, Mapbox, and d3)</li>
 </ul>
 </div>
 
 <div id="footer">
+
 Peter Richardson<br>peter@mapzen.com<br>
 work: (<a href="http://twitter.com/mxxtxr">@mxxtxr</a>)<br>
 home: (<a href="http://twitter.com/meetar">@meetar</a>)
