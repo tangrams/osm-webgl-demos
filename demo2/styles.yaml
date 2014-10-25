@@ -15,13 +15,6 @@ layers:
         mode:
             name: roads-mode
         width:
-            # default: Style.pixels(5)
-            # default: function (f, t) { return 2 * Math.log(t.coords.z); }
-            # highway: function (f, t) { return 3 * Math.log(t.coords.z); }
-            # major_road: function (f, t) { return 2.5 * Math.log(t.coords.z); }
-            # minor_road: function (f, t) { return 2 * Math.log(t.coords.z); }
-            # path: function (f, t) { return 1 * Math.log(t.coords.z); }
-
             default: 2
             highway: 20
             major_road: 10
@@ -78,5 +71,3 @@ modes:
                 globals:
                     uniform vec3 u_color;
                 fragment: color = u_color;
-
-

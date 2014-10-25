@@ -12,15 +12,12 @@ layers:
             name: water-mode
 
     roads:
-        color: 
-            default: [1, 1, 0]
         mode:
             name: roads-mode
         width:
-            # default: Style.pixels(2)
-            default: 10
-            highway: 10
-            major_road: 16
+            default: 2
+            highway: 20
+            major_road: 10
             minor_road: 5
             path: 1
 
@@ -74,5 +71,3 @@ modes:
                 globals:
                     uniform vec3 u_color;
                 fragment: color = u_color;
-
-

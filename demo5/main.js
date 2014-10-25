@@ -89,21 +89,6 @@
     };
     var osm_debug = false;
 
-    /***** GUI/debug controls *****/
-
-    // GUI options for #define-based effects
-    var gl_define_options = {
-        lighting: {
-            lighting: 'LIGHTING_DIRECTION',
-            options: {
-                'None': '',
-                'Diffuse': 'LIGHTING_POINT',
-                'Flat': 'LIGHTING_DIRECTION',
-                
-            }
-        }
-    };
-
     /*** URL parsing ***/
 
     // URL hash pattern is one of:
@@ -143,21 +128,6 @@
                 url_mode = (match && match.length > 1 && match[1]);
             });
         }
-    }
-
-    function setGLProgramDefinesForOptionSet(current_value, options) {
-        Object.keys(options).forEach(function (key) {
-            var value = options[key];
-            Tangram.GLProgram.defines[value] = ((value === current_value) && value !== '');
-        });
-    }
-
-
-    function setGLProgramDefines() {
-        Object.keys(gl_define_options).forEach(function (key) {
-            setGLProgramDefinesForOptionSet(gl_define_options[key][key], gl_define_options[key].options);
-        });
-        layer.scene.requestRedraw();
     }
 
     // Put current state on URL
@@ -212,20 +182,6 @@
 
     window.addEventListener('resize', resizeMap);
     resizeMap();
-
-    function addGUIDefines() {
-        Object.keys(gl_define_options).forEach(function (key) {
-            gui.
-                add(gl_define_options[key], key, gl_define_options[key].options).
-                onChange(function () {
-                    setGLProgramDefines();
-                    scene.refreshModes();
-                    updateURL();
-                }).
-                listen();
-        });
-    }
-
 
     // Take a screenshot and save file
     function screenshot() {
@@ -314,10 +270,10 @@
             }
 
             // Recompile/rebuild
-            setGLProgramDefines();
             scene.createCamera();
+            scene.createLighting();
             scene.refreshModes();
-            scene.rebuildTiles();
+            scene.rebuild();
             updateURL();
 
             // Force-update dat.gui
@@ -558,8 +514,19 @@
             layer.scene.refreshCamera();
         });
 
-        // #define controls
-        addGUIDefines();
+        // Lighting
+        var lighting_types = {
+            'None': null,
+            'Diffuse': 'diffuse',
+            'Specular': 'specular',
+            'Flat': 'flat',
+            'Night': 'night'
+        };
+        gui.lighting = layer.scene.styles.lighting.type;
+        gui.add(gui, 'lighting', lighting_types).onChange(function(value) {
+            layer.scene.styles.lighting.type = value;
+            layer.scene.refreshLighting();
+        });
 
         // Feature selection on hover
         gui['feature info'] = true;
@@ -584,7 +551,7 @@
                 add(layer_controls, l.name).
                 onChange(function(value) {
                     layer.scene.styles.layers[l.name].visible = value;
-                    layer.scene.rebuildTiles();
+                    layer.scene.rebuild();
                 });
         });
 
@@ -711,7 +678,6 @@
             if (url_mode) {
                 gl_mode_options.setup(url_mode);
             } else {
-                setGLProgramDefines();
                 scene.refreshModes();
             }
             updateURL();

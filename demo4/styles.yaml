@@ -1,46 +1,44 @@
 camera:
     type: perspective
-    vanishing_point: [-.25, -.75] # slightly off-center viewing angle, towards lower-left of screen
+    vanishing_point: [-.25, -.75]
+
+lighting:
+    type: flat
 
 layers:
     cycleway:
-        filter: function (f) { return f.properties.highway == "cycleway"; }
+        filter: function () { return feature.highway == "cycleway"; }
         color:
-            default: [.8, 0., 0.8]
+            default: [.8, 0, 0.8]
         width:
             default: Style.pixels(5)
 
     bridges:
-        filter: function (f) { return f.properties.is_bridge == "yes"; }
+        filter: function () { return feature.is_bridge == "yes"; }
         color:
-            default: [.0, 0.8, 0.8]
+            default: [0, 0.8, 0.8]
         width:
             default: Style.pixels(10)
 
     roads:
-        # filter: function (f) { return f.properties.highway != "cycleway"; }
-        # filter: function (f) { return f.properties.highway == "cycleway"; }
+        properties:
+            width: 2
         color:
-            default: [1., 1., 1.]
-            # default: Style.color.pseudoRandomColor
-            # default: Style.color.randomColor
+            default: [1, 1, 1]
         width:
-            default: 2
-            # highway: 20
-            # major_road: 10
-            # minor_road: 5
-            # path: 1
-            # cycleway: 10
+            default: function () { return properties.width; }
 
     buildings:
         mode:
             name: buildings
-        filter: function (f) { return f.properties.height > 5; }
+        properties:
+            min_height: 5
+        filter: function () { return feature.height > properties.min_height; }
         extrude:
             default: true
 
     earth:
-        color: 
+        color:
             default: [.5, .5, .5]
 
     landuse:
@@ -55,8 +53,6 @@ modes:
     buildings:
         extends: polygons
         shaders:
-            defines:
-                LIGHTING_DIRECTION: true
             uniforms:
                 u_height: 0
                 u_color_height: 0
@@ -64,7 +60,8 @@ modes:
                 globals: |
                     uniform float u_height;
                     uniform float u_color_height;
-                vertex: position.z *= u_height * .01;
+                vertex: |
+                    position.z *= u_height * .01;
                 fragment: |
                     if (v_world_position.z > u_color_height) color = lighting * vec3(.8);
                     else color = lighting * vec3(.5);

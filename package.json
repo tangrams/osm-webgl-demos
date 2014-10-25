@@ -1,5 +1,5 @@
 {
-  "name": "mozfest-demo",
+  "name": "osm-webgl-demos",
   "dependencies": {
     "tangram": "git://github.com/tangrams/tangram.git"
   }
