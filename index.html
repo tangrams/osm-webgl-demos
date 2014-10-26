@@ -23,10 +23,17 @@ div {
     width:60%;
     margin: -1em 20% 2em;
 }
-#footer {
+#footer, #footer a:link {
     font-size:1em;
     text-align:center;
     background-color:black;
+    color: #999;
+}
+#globes {
+    display:block;
+    text-align:center;
+    font-size: 2em;
+    margin: 0% auto;
 }
 </style>
 </head>
@@ -57,7 +64,9 @@ div {
 <h2>GeoJSON & data links:</h2>
 <ul>
 <li><a href="http://taginfo.openstreetmap.org/">taginfo.openstreetmap.org</a> (fascinating view of OSM tag usage)</li>
+<li><a href="http://wiki.openstreetmap.org/wiki/WIWOSM">Wikipedia Where in OSM</a> (OSM data for Wikipedia articles/objects)</li>
 <li><a href="http://jsoneditoronline.org">JSON browser/formatter</a></li>
+<li><a href="http://mapzen.com/vector">Mapzen's Vector Tile Service</a> (free vector tiles)</li>
 <li><a href="https://github.com/mapzen/vector-datasource/blob/master/tilestache.cfg">Mapzen's Tilestache layer definitions</a> (OSM data formatting example)</li>
 </ul>
 <h2>WebGL links:</h2>
@@ -70,16 +79,19 @@ div {
 
 <h2>Other links:</h2>
 <ul>
+<li><a href="http://mapzen.com/tangram">Tangram demo</a> (live online version)</li>
 <li><a href="http://www.propublica.org/nerds/item/how-we-made-the-3-d-new-york-city-flood-map">ProPublica: How We Made the 3-D New York City Flood Map</a> (an example of the hard way)</li>
 <li><a href="http://io.morphocode.com/urban-layers/">Morphocode's Urban Layers map</a> (a fancy map made with TIGER data, Mapbox, and d3)</li>
 </ul>
+
+<span id="globes">&#x1F30F; &#x1F30D; &#x1F30E;</span>
 </div>
 
 <div id="footer">
 
 Peter Richardson<br>peter@mapzen.com<br>
-work: (<a href="http://twitter.com/mxxtxr">@mxxtxr</a>)<br>
-home: (<a href="http://twitter.com/meetar">@meetar</a>)
+work: <a href="http://twitter.com/mxxtxr">@mxxtxr</a><br>
+home: <a href="http://twitter.com/meetar">@meetar</a>
 </div>
 
 </body>
