@@ -14,7 +14,7 @@
     var layer = Tangram.leafletLayer({
         vectorTileSource: {
             type: 'GeoJSONTileSource',
-            url:  'http://localhost:8000/{z}-{x}-{y}.json',
+            url:  window.location.origin + '/{z}-{x}-{y}.json',
             max_zoom: 16
         },
         vectorLayers: 'layers.yaml',
