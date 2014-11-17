@@ -14,7 +14,7 @@
     var layer = Tangram.leafletLayer({
         vectorTileSource: {
             type: 'GeoJSONTileSource',
-            url:  window.location.pathname + '../{z}-{x}-{y}.json',
+            url:  window.location.origin + window.location.pathname + '/{z}-{x}-{y}.json',
             max_zoom: 16
         },
         vectorLayers: 'layers.yaml',
@@ -25,7 +25,6 @@
     });
     var scene = layer.scene;
     window.scene = scene;
-
     // Resize map to window
     function resizeMap() {
         document.getElementById('map').style.width = window.innerWidth + 'px';
