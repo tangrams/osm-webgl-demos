@@ -3,7 +3,7 @@ camera:
     vanishing_point: [-.25, -.75] # slightly off-center viewing angle, towards lower-left of screen
 
 lighting:
-    type: diffuse
+    type: point
 
 modes:
     # note: consider this syntax as a special case for global mode settings
