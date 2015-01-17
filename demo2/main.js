@@ -52,8 +52,8 @@
             gui.
                 addColor(layer_colors, l).
                 onChange(function(value) {
-                    layer.scene.config.layers[l].style.color = [value[0]/255, value[1]/255, value[2]/255];
-                    layer.scene.rebuildGeometry();
+                    layer.scene.config.layers[l+"-style"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
+                    scene.dirty = true;
                     });
 
         // add visibility toggles for each layer, in a folder
@@ -66,6 +66,7 @@
                 });
 
         });
+        layer_gui.open();
     }
 
     // Add map

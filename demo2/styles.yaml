@@ -1,12 +1,4 @@
 styles:
-    buildings-style:
-        extends: polygons
-        shaders:
-            uniforms:
-                u_color: [.8, .8, .8]
-            transforms:
-                fragment: color.rgb = u_color;
-
     earth-style:
         extends: polygons
         shaders:
@@ -38,30 +30,43 @@ styles:
                 u_color: [1., 1., 1.]
             transforms:
                 fragment: color.rgb = u_color;
+
+    buildings-style:
+        extends: polygons
+        shaders:
+            uniforms:
+                u_color: [.8, .8, .8]
+            transforms:
+                fragment: color.rgb = u_color;
+
 layers:
     earth:
         geometry: {filter: earth}
         style:
             order: 0
             name: earth-style
+            color: [0, 0, 0]
 
     landuse:
         geometry: {filter: landuse}
         style:
             order: 1
             name: landuse-style
+            color: [0, 0, 0]
 
     water:
         geometry: {filter: water}
         style:
             order: 2
             name: water-style
+            color: [0, 0, 0]
 
     roads:
         geometry: {filter: roads}
         style:
             order: 0
             name: roads-style
+            color: [0, 0, 0]
             width: 3
         highway:
             filter: 
@@ -87,5 +92,6 @@ layers:
     buildings:
         geometry: {filter: buildings}
         style:
+            color: [0, 0, 0]
             order: 4
             name: buildings-style
