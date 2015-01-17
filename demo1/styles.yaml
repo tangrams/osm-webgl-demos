@@ -1,62 +1,75 @@
-modes:
+styles:
     transparent:
         extends: polygons
         shaders:
             transforms:
-                fragment: if (color == vec3(0.)) discard;
+                fragment: if (color == vec4(0.)) discard;
 
 layers:
     earth:
-        mode:
+        geometry: {filter: earth}
+        style:
+            order: 0
             name: transparent
-        color:
-            default: [.0, .0, .0]
-        outline:
-            color:
-                default: [1, .5, .5]
-            width:
-                default: Style.pixels(2)
-            tile_edges: true
+            color: [0, 0, 0]
+            outline:
+                color: [1, .5, .5]
+                width: 2px
+                tile_edges: true
 
     landuse:
-        mode:
+        geometry: {filter: landuse}
+        style:
+            order: 1
             name: transparent
-        color:
-            default: [.0, .0, .0]
-        outline:
-            color:
-                default: [.5, 1., .5]
-            width:
-                default: Style.pixels(2)
+            color: [0, 0, 0]
+            outline:
+                color: [.5, 1., .5]
+                width: 2px
 
     water:
-        mode:
+        geometry: {filter: water}
+        style:
+            order: 2
             name: transparent
-        color:
-            default: [.0, .0, .0]
-        outline:
-            color:
-                default: [.5, .5, 1]
-            width:
-                default: Style.pixels(2)
-            tile_edges: true
+            color: [0, 0, 0]
+            outline:
+                color: [.5, .5, 1]
+                width: 2px
+                tile_edges: true
 
     roads:
-        color:
-            default: [1, 1, 1]
-        width:
-            highway: 10
-            major_road: 7
-            minor_road: 5
-            path: 3
+        geometry: {filter: roads}
+        style:
+            order: 3
+            color: [1, 1, 1]
+        highway:
+            filter: 
+                kind: highway
+            style:
+                width: 10
+        major_road:
+            filter: 
+                kind: major_road
+            style:
+                width: 7
+        minor_road:
+            filter: 
+                kind: minor_road
+            style:
+                width: 5
+        path:
+            filter: 
+                kind: path
+            style:
+                width: 3
 
     buildings:
-        mode:
+        geometry: {filter: buildings}
+        style:
+            order: 4
             name: transparent
-        color:
-            default: [0., .0, .0]
-        outline:
-            color:
-                default: [1., .5., 1.]
-            width:
-                default: Style.pixels(1)
+            color: [0, 0, 0]
+            outline:
+                color: [1., .5., 1.]
+                width: 1px
