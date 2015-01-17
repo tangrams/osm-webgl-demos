@@ -24,6 +24,7 @@
     });
     var scene = layer.scene;
     window.scene = scene;
+    
     // Resize map to window
     function resizeMap() {
         document.getElementById('map').style.width = window.innerWidth + 'px';
