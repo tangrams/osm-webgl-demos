@@ -2,8 +2,7 @@ sources:
     local:
         type: 'GeoJSONTileSource'
         url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
-        # url: function() {return window.location.origin + window.location.pathname + '../{z}-{x}-{y}.json';}
-        # url: '../{z}-{x}-{y}.json'
+        url: '../{z}-{x}-{y}.json'
         max_zoom: 16
 
 layers:

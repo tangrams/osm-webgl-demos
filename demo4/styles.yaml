@@ -39,41 +39,39 @@ layers:
         geometry:
             source: osm
             filter: roads
-        # properties:
-        #     width: 2
+        properties:
+            width: 3
         style:
             order: 2
             color: [1, 1, 1]
-            width: 2
-            # width: function () { return properties.width; }
+            # width: 2
+            width: function () { return properties.width; }
 
-    cycleway:
+        cycleway:
+            filter: { highway: "cycleway" }
+            style:
+                color: [.8, 0, .8]
+                width: 5px
+
+        bridges:
+            filter: { is_bridge: "yes" }
+            style:
+                color: [0, .8, .8]
+                width: 10px
+
+    buildings:
         geometry:
             source: osm
-            filter: { highway: "cycleway" }
+            filter: buildings
+        filter: function () { return feature.height > properties.min_height; }
+        properties:
+            min_height: 5
         style:
-            color: [.8, 0, .8]
-            width: 5px
-
-    # bridges:
-    #     filter: { is_bridge: "yes" }
-    #     style:
-    #         color: [0, .8, .8]
-    #         width:
-    #             default: 10px
-
-    # buildings:
-    #     geometry:
-    #         source: osm
-    #         filter: buildings
-    #     properties:
-    #         min_height: 5
-    #     style:
-    #         name: buildings
-    #         color: black # must set a vertex color for shader to be applied
-    #         filter: function () { return feature.height > properties.min_height; }
-    #         extrude:
-    #             default: true
+            order: 4
+            name: buildings
+            color: black # must set a vertex color for shader to be applied
+            extrude:
+                default: true
 
 
 styles:

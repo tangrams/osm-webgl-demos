@@ -2,13 +2,13 @@
 
     // Leaflet map
     var map = L.map('map', {
-        minZoom: 17,
+        minZoom: 16,
         maxZoom: 17,
         inertia: false,
         keyboard: false,
         zoomControl: false
     });
-    map.setView([40.71186988568351, -74.01727437973024], 17);
+    map.setView([40.71186988568351, -74.01727437973024], 16);
 
     // Tangram layer
     var layer = Tangram.leafletLayer({

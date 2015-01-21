@@ -6,7 +6,7 @@ function log(x) {
 
     // Leaflet map
     var map = L.map('map', {
-        minZoom: 17,
+        minZoom: 16,
         maxZoom: 17,
         inertia: false,
         keyboard: false,
@@ -40,15 +40,15 @@ function log(x) {
         // add visibility toggles for each layer
 
         var layer_controls = {};
-        Object.keys(layer.scene.config.layers).forEach(function(l) {
-            if (layer.scene.config.layers[l] == null) {
+        Object.keys(scene.config.layers).forEach(function(l) {
+            if (scene.config.layers[l] == null) {
                 return;
             }
-            layer_controls[l] = !(layer.scene.config.layers[l].style.visible == false);
+            layer_controls[l] = !(scene.config.layers[l].style.visible == false);
             gui.
                 add(layer_controls, l).
                 onChange(function(value) {
-                    layer.scene.config.layers[l].style.visible = value;
+                    scene.config.layers[l].style.visible = value;
                     layer.scene.rebuildGeometry();
                 });
         });
