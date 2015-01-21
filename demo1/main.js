@@ -1,3 +1,7 @@
+function log(x) {
+    return console.log(x);
+}
+
 (function () {
 
     // Leaflet map
@@ -12,13 +16,7 @@
 
     // Tangram layer
     var layer = Tangram.leafletLayer({
-        vectorTileSource: {
-            type: 'GeoJSONTileSource',
-            url:  window.location.origin + window.location.pathname + '../{z}-{x}-{y}.json',
-            max_zoom: 16
-        },
-        vectorLayers: 'layers.yaml',
-        vectorStyles: 'styles.yaml',
+        scene: 'styles.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
@@ -40,18 +38,18 @@
         gui.domElement.parentNode.style.zIndex = 5; // make sure GUI is on top of map
 
         // add visibility toggles for each layer
+
         var layer_controls = {};
-        scene.layers.forEach(function(l) {
-            if (scene.styles.layers[l.name] == null) {
+        Object.keys(layer.scene.config.layers).forEach(function(l) {
+            if (layer.scene.config.layers[l] == null) {
                 return;
             }
-
-            layer_controls[l.name] = !(scene.styles.layers[l.name].visible == false);
+            layer_controls[l] = !(layer.scene.config.layers[l].style.visible == false);
             gui.
-                add(layer_controls, l.name).
+                add(layer_controls, l).
                 onChange(function(value) {
-                    scene.styles.layers[l.name].visible = value;
-                    scene.rebuild();
+                    layer.scene.config.layers[l].style.visible = value;
+                    layer.scene.rebuildGeometry();
                 });
         });
     }
