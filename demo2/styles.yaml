@@ -12,28 +12,36 @@ layers:
             source: local
             filter: earth
         style:
+            order: 1
+            color: black # must set a vertex color for shader to be applied
             name: earth-style
 
     landuse:
         geometry:
             source: local
-            filter: earth
+            filter: landuse
         style:
+            order: 2
+            color: black
             name: landuse-style
 
     water:
         geometry:
             source: local
-            filter: earth
+            filter: water
         style:
+            order: 3
+            color: black
             name: water-style
 
     roads:
         geometry:
             source: local
-            filter: earth
+            filter: roads
         style:
+            order: 4
             name: roads-style
+            color: black
             width: 2
         highway:
             filter: { kind: highway }
@@ -55,8 +63,10 @@ layers:
     buildings:
         geometry:
             source: local
-            filter: earth
+            filter: buildings
         style:
+            order: 5
+            color: black
             name: buildings-style
 
 styles:
