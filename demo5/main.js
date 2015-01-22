@@ -1,187 +1,62 @@
-/*jslint browser: true*/
-/*global Tangram, gui */
-
 (function () {
     'use strict';
-
-    var tile_sources = {
-        mapzen: {
-            type: 'GeoJSONTileSource',
-            url: window.location.protocol + '//vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
-        },
-        'mapzen-dev': {
-            type: 'GeoJSONTileSource',
-            url: window.location.protocol + '//vector.dev.mapzen.com/osm/all/{z}/{x}/{y}.json'
-        },
-        'mapzen-local': {
-            type: 'GeoJSONTileSource',
-            url: window.location.protocol + '//localhost:8080/all/{z}/{x}/{y}.json'
-        },
-        'mapzen-mvt': {
-            type: 'MapboxFormatTileSource',
-            url: window.location.protocol + '//vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox'
-        },
-        'mapzen-dev-mvt': {
-            type: 'MapboxFormatTileSource',
-            url: window.location.protocol + '//vector.dev.mapzen.com/osm/all/{z}/{x}/{y}.mapbox'
-        },
-        'mapzen-topojson': {
-            type: 'TopoJSONTileSource',
-            url: window.location.protocol + '//vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson'
-        },
-
-        // 'osm': {
-        //     type: 'GeoJSONTileSource',
-        //     url: window.location.protocol + '//tile.openstreetmap.us/vectiles-all/{z}/{x}/{y}.json'
-        // },
-        // 'mapbox': {
-        //     type: 'MapboxFormatTileSource',
-        //     url: 'http://{s:[a,b,c,d]}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6-dev/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoiYmNhbXBlciIsImEiOiJWUmh3anY0In0.1fgSTNWpQV8-5sBjGbBzGg',
-        //     max_zoom: 15
-        // }
-
-    },
-        default_tile_source = 'mapzen',
-        scene_url = 'styles.yaml',
-        osm_debug = false,
-        locations = {
-            'London': [51.508, -0.105, 15],
-            'New York': [40.70531887544228, -74.00976419448853, 16],
-            'Seattle': [47.609722, -122.333056, 15]
-        }, url_hash, map_start_location, url_ui, url_style;
-
-
-
-    getVaulesFromUrl();
-
-    // default source, can be overriden by URL
-    var
-        map = L.map('map', {
-            maxZoom: 20,
-            trackResize: true,
-            inertia: false,
-            keyboard: false
-        }),
-
-        layer = Tangram.leafletLayer({
-            scene: scene_url,
-            preUpdate: preUpdate,
-            postUpdate: postUpdate,
-            logLevel: 'debug',
-            attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram" target="_blank">Source Code</a>'
-        });
-
-    layer.scene.subscribe({
-        loadScene: function (config) {
-            // If no source was set in scene definition, set one based on the URL
-            if (!config.sources || !config.sources['osm']) {
-                config.sources = config.sources || {};
-                config.sources['osm'] = tile_sources[default_tile_source];
-            }
-        }
+    // Leaflet map
+    var map = L.map('map', {
+        minZoom: 2,
+        maxZoom: 20,
+        inertia: false,
+        keyboard: false,
+        zoomControl: false
     });
+
+    var map_start_location = [40.71186988568351, -74.01727437973024, 17];
+
+    /*** URL parsing ***/
+
+    // leaflet-style URL hash pattern:
+    // #[zoom],[lat],[lng]
+    var url_hash = window.location.hash.slice(1, window.location.hash.length).split('/');
+
+    if (url_hash.length == 3) {
+        map_start_location = [url_hash[1],url_hash[2], url_hash[0]];
+        // convert from strings
+        map_start_location = map_start_location.map(Number);
+    }
+
+    // setView expects format ([lat, long], zoom)
+    map.setView(map_start_location.slice(0, 3), map_start_location[2]);
+
+    var hash = new L.Hash(map);
+
+    // Tangram layer
+    var layer = Tangram.leafletLayer({
+        scene: 'styles.yaml',
+        attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
+        unloadInvisibleTiles: false,
+        updateWhenIdle: false
+    });
+
+    /*** Map ***/
+
+    window.map = map;
+    window.layer = layer;
+    var scene = layer.scene;
+    window.scene = scene;
+    // Resize map to window
+    function resizeMap() {
+        document.getElementById('map').style.width = window.innerWidth + 'px';
+        document.getElementById('map').style.height = window.innerHeight + 'px';
+        map.invalidateSize(false);
+    }
+    window.addEventListener('resize', resizeMap);
+    resizeMap();
 
 
     /***** GUI/debug controls *****/
 
-    /*** URL parsing ***/
-
-    // URL hash pattern is one of:
-    // #[source]
-    // #[lat],[lng],[zoom]
-    // #[source],[lat],[lng],[zoom]
-    // #[source],[location name]
-    function getVaulesFromUrl() {
-
-        url_hash = window.location.hash.slice(1, window.location.hash.length).split(',');
-
-        // Get tile source from URL
-        if (url_hash.length >= 1 && tile_sources[url_hash[0]] != null) {
-            default_tile_source = url_hash[0];
-        }
-
-        // Get location from URL
-        map_start_location = locations['New York'];
-
-        if (url_hash.length === 3) {
-            map_start_location = url_hash.slice(0, 3);
-        }
-        if (url_hash.length > 3) {
-            map_start_location = url_hash.slice(1, 4);
-        }
-        else if (url_hash.length === 2) {
-            map_start_location = locations[url_hash[1]];
-        }
-
-        if (url_hash.length > 4) {
-            url_ui = url_hash.slice(4);
-
-            // Style on URL?
-            url_style;
-            if (url_ui) {
-                var re = new RegExp(/(?:style|mode)=(\w+)/);
-                url_ui.forEach(function(u) {
-                    var match = u.match(re);
-                    url_style = (match && match.length > 1 && match[1]);
-                });
-            }
-        }
-
-    }
-
-    // Put current state on URL
-    var update_url_throttle = 100;
-    var update_url_timeout = null;
-    function updateURL() {
-        clearTimeout(update_url_timeout);
-        update_url_timeout = setTimeout(function() {
-            var center = map.getCenter();
-
-            // TODO: this looks like a leaflet bug? sometimes returning a LatLng object, sometimes an array
-            if (Array.isArray(center)) {
-                center = { lat: center[0], lng: center[1] };
-            }
-
-            var url_options = [default_tile_source, center.lat, center.lng, map.getZoom()];
-
-            if (style_options && style_options.effect != '') {
-                url_options.push('style=' + style_options.effect);
-            }
-
-            window.location.hash = url_options.join(',');
-        }, update_url_throttle);
-    }
-
-    /*** Map ***/
-
-    window.layer = layer;
-    window.map = map;
-    var scene = layer.scene;
-    window.scene = scene;
-
-    // Update URL hash on move
-    map.attributionControl.setPrefix('');
-    map.setView(map_start_location.slice(0, 2), map_start_location[2]);
-    map.on('moveend', updateURL);
-
-    // Take a screenshot and save file
-    function screenshot() {
-        // Adapted from: https://gist.github.com/unconed/4370822
-        var image = scene.canvas.toDataURL('image/png').slice(22); // slice strips host/mimetype/etc.
-        var data = atob(image); // convert base64 to binary without UTF-8 mangling
-        var buf = new Uint8Array(data.length);
-        for (var i = 0; i < data.length; ++i) {
-            buf[i] = data.charCodeAt(i);
-        }
-        var blob = new Blob([buf], { type: 'image/png' });
-        saveAs(blob, 'tangram-' + (+new Date()) + '.png'); // uses FileSaver.js: https://github.com/eligrey/FileSaver.js/
-    }
-
-    // For easier debugging access
-
     // GUI options for rendering style/effects
     var style_options = {
-        effect: url_style || '',
+        effect: '',
         options: {
             'None': '',
             'Water animation': 'water',
@@ -194,9 +69,7 @@
             'Color Halftone': 'colorhalftone',
             'Windows': 'windows',
             'Environment Map': 'envmap',
-            'Color Bleed': 'colorbleed',
-            'Rainbow': 'rainbow',
-            'Icons': 'icons'
+            'Rainbow': 'rainbow'
         },
         setup: function (style) {
             // Restore initial state
@@ -253,7 +126,6 @@
             // Recompile/rebuild
             scene.updateConfig();
             scene.rebuildGeometry();
-            updateURL();
 
             // Force-update dat.gui
             for (var i in gui.__controllers) {
@@ -264,17 +136,6 @@
             'water': {
                 setup: function (style) {
                     scene.config.layers.water.style.name = style;
-                }
-            },
-            'colorbleed': {
-                setup: function (style) {
-                    scene.config.layers.buildings.style.name = style;
-
-                    this.state.animated = scene.styles[style].shaders.defines['EFFECT_COLOR_BLEED_ANIMATED'];
-                    this.folder.add(this.state, 'animated').onChange(function(value) {
-                        scene.styles[style].shaders.defines['EFFECT_COLOR_BLEED_ANIMATED'] = value;
-                        scene.updateConfig();
-                    });
                 }
             },
             'rainbow': {
@@ -392,8 +253,6 @@
                     scene.config.layers.landuse.style.name = style;
                     scene.config.layers.earth.style.name = style;
 
-                    scene.config.layers.pois.style.visible = false;
-
                     this.state.dot_frequency = this.uniforms.dot_frequency;
                     this.folder.add(this.state, 'dot_frequency', 0, 200).onChange(function(value) {
                         this.uniforms.dot_frequency = value;
@@ -420,14 +279,12 @@
                     });
 
                     scene.config.layers.earth.style.visible = false;
-                    scene.config.layers.pois.style.visible = false;
                 }
             },
             'windows': {
-                camera: 'isometric', // force isometric
+                camera: 'isometric',
                 setup: function (style) {
                     scene.config.layers.buildings.style.name = style;
-                    scene.config.layers.pois.style.visible = false;
                 }
             },
             'envmap': {
@@ -444,19 +301,6 @@
                     this.state.u_env_map = this.uniforms.u_env_map;
                     this.folder.add(this.state, 'u_env_map', envmaps).onChange(function(value) {
                         this.uniforms.u_env_map = value;
-                        scene.requestRedraw();
-                    }.bind(this));
-                }
-            },
-            'icons': {
-                setup: function (style) {
-                    scene.config.layers.pois.style.name = 'icons';
-                    scene.config.layers.pois.style.sprite = 'tree';
-                    scene.config.layers.pois.style.size = [[13, '16px'], [14, '24px'], [15, '32px']];
-
-                    this.state.bouncy = this.uniforms.bouncy;
-                    this.folder.add(this.state, 'bouncy').onChange(function(value) {
-                        this.uniforms.bouncy = value;
                         scene.requestRedraw();
                     }.bind(this));
                 }
@@ -555,12 +399,6 @@
         gui['feature info'] = true;
         gui.add(gui, 'feature info');
 
-        // Screenshot
-        gui.screenshot = function () {
-            gui.queue_screenshot = true;
-        };
-        gui.add(gui, 'screenshot');
-
         // Layers
         var layer_gui = gui.addFolder('Layers');
         var layer_controls = {};
@@ -605,8 +443,6 @@
             scene.getFeatureAt(pixel).then(function(selection) {
                 var feature = selection.feature;
                 if (feature != null) {
-                    // console.log("selection map: " + JSON.stringify(feature));
-
                     var label = '';
                     if (feature.properties.name != null) {
                         label = feature.properties.name;
@@ -643,44 +479,15 @@
         });
     }
 
-    // Pre-render hook
-    var zoom_step = 0.03;
-    function preUpdate (will_render) {
-        return;
-    }
-
-    // Post-render hook
-    function postUpdate () {
-        // Screenshot needs to happen in the requestAnimationFrame callback, or the frame buffer might already be cleared
-        if (gui.queue_screenshot == true) {
-            gui.queue_screenshot = false;
-            screenshot();
-        }
-    }
-
     /***** Render loop *****/
     window.addEventListener('load', function () {
         // Scene initialized
         layer.on('init', function() {
             addGUI();
-
-            if (url_style) {
-                style_options.setup(url_style);
-            }
-            updateURL();
-
             initFeatureSelection();
         });
         layer.addTo(map);
 
-        if (osm_debug == true) {
-            window.osm_layer =
-                L.tileLayer(
-                    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    { opacity: 0.5 })
-                .bringToFront()
-                .addTo(map);
-        }
     });
 
 
