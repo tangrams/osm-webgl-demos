@@ -9,7 +9,7 @@
         zoomControl: false
     });
 
-    var map_start_location = [40.71186988568351, -74.01727437973024, 17];
+    var map_start_location = [40.7069, -74.0108, 16];
 
     /*** URL parsing ***/
 
