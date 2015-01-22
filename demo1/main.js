@@ -1,7 +1,3 @@
-function log(x) {
-    return console.log(x);
-}
-
 (function () {
 
     // Leaflet map
