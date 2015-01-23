@@ -7,7 +7,8 @@ styles:
 sources:
     local:
         type: 'GeoJSONTileSource'
-        url: '../{z}-{x}-{y}.json'
+        # url: '../{z}-{x}-{y}.json'
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json
         max_zoom: 16
 
 layers:
@@ -83,5 +84,6 @@ layers:
             order: 8
             color: [0., .0, .0]
             outline:
+                tile_edges: true
                 color: [1., .5., 1.]
                 width: 1px

@@ -3,7 +3,7 @@
     // Leaflet map
     var map = L.map('map', {
         minZoom: 16,
-        maxZoom: 16,
+        maxZoom: 17,
         inertia: false,
         keyboard: false,
         zoomControl: false
