@@ -7,8 +7,7 @@ styles:
 sources:
     local:
         type: 'GeoJSONTileSource'
-        # url: '../{z}-{x}-{y}.json'
-        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json
+        url: '../{z}-{x}-{y}.json'
         max_zoom: 16
 
 layers:
