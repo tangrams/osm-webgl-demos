@@ -1,10 +1,10 @@
 osm-webgl-demos
 ============
 
+A series of demonstrations originlly made for Mozfest14 showing how OpenStreetMap vector data can be displayed and manipulated in a browser using WebGL.
+
 ###Mozfest14 etherpad link:
 https://festival.etherpad.mozilla.org/WyaCRtedyS
-
-A series of demonstrations showing how OpenStreetMap vector data can be displayed and manipulated in a browser using WebGL.
 
 ### Live version
 
