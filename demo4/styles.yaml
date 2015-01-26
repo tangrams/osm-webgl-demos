@@ -51,13 +51,16 @@ layers:
             filter: { highway: "cycleway" }
             style:
                 color: [.8, 0, .8]
-                width: 5px
+                width: function () { return properties.width * 2; }
+
 
         bridges:
             filter: { is_bridge: "yes" }
+            properties:
+                width: 3
             style:
                 color: [0, .8, .8]
-                width: 10px
+                width: function () { return properties.width * 3; }
 
     buildings:
         geometry:

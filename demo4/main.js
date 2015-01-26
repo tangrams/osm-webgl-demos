@@ -98,6 +98,7 @@
         // roadwidth.onFinishChange(function(value) {
         roadwidth.onChange(function(value) {
             scene.config.layers["roads"].properties.width = value;
+            scene.config.layers["roads"].bridges.properties.width = value;
             scene.rebuildGeometry();
         });
 
