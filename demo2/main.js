@@ -2,8 +2,8 @@
 
     // Leaflet map
     var map = L.map('map', {
-        minZoom: 17,
-        maxZoom: 17,
+        minZoom: 16,
+        maxZoom: 20,
         inertia: false,
         keyboard: false,
         zoomControl: false
@@ -12,11 +12,6 @@
 
     // Tangram layer
     var layer = Tangram.leafletLayer({
-        source: {
-            type: 'GeoJSONTileSource',
-            url:  window.location.origin + window.location.pathname + '../{z}-{x}-{y}.json',
-            max_zoom: 16
-        },
         scene: 'styles.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
@@ -40,33 +35,33 @@
         window.gui = gui;
         gui.domElement.parentNode.style.zIndex = 5; // make sure GUI is on top of map
 
-        var layer_controls = {};
-        var layer_gui = gui.addFolder('Layers');
         // add color controls for each layer
-        Object.keys(layer.scene.config.layers).forEach(function(l) {
-            if (layer.scene.config.layers[l] == null) {
+        var layer_gui = gui.addFolder('Layers');
+        var layer_colors = {};
+        var layer_controls = {};
+        Object.keys(scene.config.layers).forEach(function(l) {
+            if (scene.config.layers[l] == null) {
                 return;
             }
-            var c = layer.scene.config.layers[l].style.color;
-            layer_colors[l] = [c[0]*255, c[1]*255, c[2]*255];
-            gui.
-                addColor(layer_colors, l).
-                onChange(function(value) {
-                    layer.scene.config.layers[l+"-style"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-                    scene.dirty = true;
-                    });
 
-        // add visibility toggles for each layer, in a folder
-            layer_controls[l] = !(layer.scene.config.layers[l].style.visible == false);
+            layer_controls[l] = !(scene.config.layers[l].style.visible == false);
             layer_gui.
                 add(layer_controls, l).
                 onChange(function(value) {
-                    layer.scene.config.layers[l].style.visible = value;
-                    layer.scene.rebuildGeometry();
+                    scene.config.layers[l].style.visible = value;
+                    scene.rebuildGeometry();
+                });
+            var c = scene.config.styles[l+"-style"].shaders.uniforms.u_color;
+            layer_colors[l] = [c[0]*255, c[1]*255, c[2]*255];
+            layer_gui.
+                addColor(layer_colors, l).
+                onChange(function(value) {
+                    scene.config.styles[l+"-style"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
+                    scene.dirty = true;
                 });
 
         });
-        layer_gui.open();
+    layer_gui.open();
     }
 
     // Add map

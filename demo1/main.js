@@ -2,8 +2,8 @@
 
     // Leaflet map
     var map = L.map('map', {
-        minZoom: 17,
-        maxZoom: 17,
+        minZoom: 16,
+        maxZoom: 20,
         inertia: false,
         keyboard: false,
         zoomControl: false
@@ -12,11 +12,6 @@
 
     // Tangram layer
     var layer = Tangram.leafletLayer({
-        source: {
-            type: 'GeoJSONTileSource',
-            url:  window.location.origin + window.location.pathname + '../{z}-{x}-{y}.json',
-            max_zoom: 16
-        },
         scene: 'styles.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
@@ -40,16 +35,17 @@
         window.gui = gui;
         gui.domElement.parentNode.style.zIndex = 5; // make sure GUI is on top of map
         // add visibility toggles for each layer
+
         var layer_controls = {};
-        Object.keys(layer.scene.config.layers).forEach(function(l) {
-            if (layer.scene.config.layers[l] == null) {
+        Object.keys(scene.config.layers).forEach(function(l) {
+            if (scene.config.layers[l] == null) {
                 return;
             }
-            layer_controls[l] = !(layer.scene.config.layers[l].style.visible == false);
+            layer_controls[l] = !(scene.config.layers[l].style.visible == false);
             gui.
                 add(layer_controls, l).
                 onChange(function(value) {
-                    layer.scene.config.layers[l].style.visible = value;
+                    scene.config.layers[l].style.visible = value;
                     layer.scene.rebuildGeometry();
                 });
         });

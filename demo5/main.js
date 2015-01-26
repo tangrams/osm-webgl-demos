@@ -1,268 +1,122 @@
-/*jslint browser: true*/
-/*global Tangram, gui */
-
 (function () {
     'use strict';
+    // Leaflet map
+    var map = L.map('map', {
+        minZoom: 2,
+        maxZoom: 20,
+        inertia: false,
+        keyboard: false,
+        zoomControl: false
+    });
 
-    function appendProtocol(url) {
-        return window.location.protocol + url;
-    }
-
-    // default source, can be overriden by URL
-    var default_tile_source = 'mapzen',
-        rS;
-
-    var tile_sources = {
-        'demo': {
-            source: {
-                type: 'GeoJSONTileSource',
-                // url:  'http://localhost:8000/24640.json',
-                url:  'http://localhost:8000/{z}-{x}-{y}.json',
-                // url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'mapzen': {
-            source: {
-                type: 'GeoJSONTileSource',
-                url:  appendProtocol('//vector.mapzen.com/osm/all/{z}/{x}/{y}.json')
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'mapzen-dev': {
-            source: {
-                type: 'GeoJSONTileSource',
-                url: appendProtocol('//vector.dev.mapzen.com/osm/all/{z}/{x}/{y}.json')
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'mapzen-local': {
-            source: {
-                type: 'GeoJSONTileSource',
-                url: 'http://localhost:8080/all/{z}/{x}/{y}.json'
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'mapzen-mvt': {
-            source: {
-                type: 'MapboxFormatTileSource',
-                url: appendProtocol('//vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox')
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'mapzen-topojson': {
-            source: {
-                type: 'TopoJSONTileSource',
-                url: appendProtocol('//vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson')
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'osm': {
-            source: {
-                type: 'GeoJSONTileSource',
-                url: 'http://tile.openstreetmap.us/vectiles-all/{z}/{x}/{y}.json'
-            },
-            layers: 'layers.yaml',
-            styles: 'styles.yaml'
-        },
-        'mapbox': {
-            source: {
-                type: 'MapboxFormatTileSource',
-                url: 'http://{s:[a,b,c,d]}.tiles.mapbox.com/v4/mapbox.mapbox-streets-v6-dev/{z}/{x}/{y}.vector.pbf?access_token=pk.eyJ1IjoiYmNhbXBlciIsImEiOiJWUmh3anY0In0.1fgSTNWpQV8-5sBjGbBzGg',
-                max_zoom: 15
-            },
-            layers: 'layers_mvt.yaml',
-            styles: 'styles.yaml'
-        }
-    };
-
-    var locations = {
-        'London': [51.508, -0.105, 15],
-        'New York': [40.70531887544228, -74.00976419448853, 16],
-        'Seattle': [47.609722, -122.333056, 15]
-    };
-    var osm_debug = false;
+    var map_start_location = [40.7069, -74.0108, 16];
 
     /*** URL parsing ***/
 
-    // URL hash pattern is one of:
-    // #[source]
-    // #[lat],[lng],[zoom]
-    // #[source],[lat],[lng],[zoom]
-    // #[source],[location name]
-    var url_hash = window.location.hash.slice(1, window.location.hash.length).split(',');
-
-    // Get tile source from URL
-    if (url_hash.length >= 1 && tile_sources[url_hash[0]] != null) {
-        default_tile_source = url_hash[0];
-    }
-
-    // Get location from URL
-    var map_start_location = locations['New York'];
+    // leaflet-style URL hash pattern:
+    // #[zoom],[lat],[lng]
+    var url_hash = window.location.hash.slice(1, window.location.hash.length).split('/');
 
     if (url_hash.length == 3) {
-        map_start_location = url_hash.slice(0, 3);
-    }
-    if (url_hash.length > 3) {
-        map_start_location = url_hash.slice(1, 4);
-    }
-    else if (url_hash.length == 2) {
-        map_start_location = locations[url_hash[1]];
+        map_start_location = [url_hash[1],url_hash[2], url_hash[0]];
+        // convert from strings
+        map_start_location = map_start_location.map(Number);
     }
 
-    if (url_hash.length > 4) {
-        var url_ui = url_hash.slice(4);
+    // setView expects format ([lat, long], zoom)
+    map.setView(map_start_location.slice(0, 3), map_start_location[2]);
 
-        // Mode on URL?
-        var url_mode;
-        if (url_ui) {
-            var re = new RegExp(/mode=(\w+)/);
-            url_ui.forEach(function(u) {
-                var match = u.match(re);
-                url_mode = (match && match.length > 1 && match[1]);
-            });
-        }
-    }
+    var hash = new L.Hash(map);
 
-    // Put current state on URL
-    function updateURL() {
-        var map_latlng = map.getCenter(),
-            url_options = [default_tile_source, map_latlng.lat, map_latlng.lng, map.getZoom()];
-
-        if (rS) {
-            url_options.push('rstats');
-        }
-
-        if (gl_mode_options && gl_mode_options.effect != '') {
-            url_options.push('mode=' + gl_mode_options.effect);
-        }
-
-        window.location.hash = url_options.join(',');
-    }
-
-    /*** Map ***/
-
-    var map = L.map('map', {
-        maxZoom: 20,
-        inertia: false,
-        keyboard: true
-    });
-
+    // Tangram layer
     var layer = Tangram.leafletLayer({
-        vectorTileSource: tile_sources[default_tile_source].source,
-        vectorLayers: tile_sources[default_tile_source].layers,
-        vectorStyles: tile_sources[default_tile_source].styles,
-        numWorkers: 2,
-        // debug: true,
+        scene: 'styles.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
     });
 
+    /*** Map ***/
+
+    window.map = map;
+    window.layer = layer;
     var scene = layer.scene;
     window.scene = scene;
-
-    // Update URL hash on move
-    map.attributionControl.setPrefix('');
-    map.setView(map_start_location.slice(0, 2), map_start_location[2]);
-    map.on('moveend', updateURL);
-
     // Resize map to window
     function resizeMap() {
         document.getElementById('map').style.width = window.innerWidth + 'px';
         document.getElementById('map').style.height = window.innerHeight + 'px';
         map.invalidateSize(false);
     }
-
     window.addEventListener('resize', resizeMap);
     resizeMap();
 
-    // Take a screenshot and save file
-    function screenshot() {
-        // Adapted from: https://gist.github.com/unconed/4370822
-        var image = scene.canvas.toDataURL('image/png').slice(22); // slice strips host/mimetype/etc.
-        var data = atob(image); // convert base64 to binary without UTF-8 mangling
-        var buf = new Uint8Array(data.length);
-        for (var i = 0; i < data.length; ++i) {
-            buf[i] = data.charCodeAt(i);
-        }
-        var blob = new Blob([buf], { type: 'image/png' });
-        saveAs(blob, 'tangram-' + (+new Date()) + '.png'); // uses FileSaver.js: https://github.com/eligrey/FileSaver.js/
-    }
 
-    // For easier debugging access
+    /***** GUI/debug controls *****/
 
-    // GUI options for rendering modes/effects
-    var gl_mode_options = {
-        effect: url_mode || '',
+    // GUI options for rendering style/effects
+    var style_options = {
+        effect: '',
         options: {
             'None': '',
+            'Water animation': 'water',
             'Elevator': 'elevator',
             'Breathe': 'breathe',
+            'Pop-up': 'popup',
             'Dots': 'dots',
             'Wood': 'wood',
             'B&W Halftone': 'halftone',
             'Color Halftone': 'colorhalftone',
             'Windows': 'windows',
             'Environment Map': 'envmap',
-            'Color Bleed': 'colorbleed',
             'Rainbow': 'rainbow'
         },
-        setup: function (mode) {
+        setup: function (style) {
             // Restore initial state
-            var layer_styles = scene.styles.layers;
+            var layer_styles = scene.config.layers;
             for (var l in layer_styles) {
-                if (this.initial.layers[l] != null) {
-                    layer_styles[l].mode = this.initial.layers[l].mode;
-                    layer_styles[l].visible = this.initial.layers[l].visible;
+                if (this.initial.layers[l]) {
+                    layer_styles[l].style = Object.assign({}, this.initial.layers[l].style);
                 }
             };
-            gui.camera = scene.styles.camera.type = this.initial.camera || scene.styles.camera.type;
+            gui.camera = scene.config.camera.type = this.initial.camera || scene.config.camera.type;
 
-            // Remove existing mode-specific controls
+            // Remove existing style-specific controls
             gui.removeFolder(this.folder);
 
-            // Mode-specific settings
-            if (mode != '') {
+            // Style-specific settings
+            if (style != '') {
                 // Save settings to restore later
                 for (l in layer_styles) {
                     if (this.initial.layers[l] == null) {
                         this.initial.layers[l] = {
-                            // mode: (layer_styles[l].mode ? { name: layer_styles[l].mode.name } : null),
-                            mode: layer_styles[l].mode,
-                            visible: layer_styles[l].visible
+                            style: Object.assign({}, layer_styles[l].style)
                         };
                     }
                 }
-                this.initial.camera = this.initial.camera || scene.styles.camera.type;
+                this.initial.camera = this.initial.camera || scene.config.camera.type;
 
-                // Remove existing mode-specific controls
+                // Remove existing style-specific controls
                 gui.removeFolder(this.folder);
 
-                if (this.settings[mode] != null) {
-                    var settings = this.settings[mode] || {};
+                if (this.settings[style] != null) {
+                    var settings = this.settings[style] || {};
 
                     // Change projection if specified
-                    gui.camera = scene.styles.camera.type = settings.camera || this.initial.camera;
+                    gui.camera = scene.config.camera.type = settings.camera || this.initial.camera;
 
-                    // Mode-specific setup function
+                    // Style-specific setup function
                     if (settings.setup) {
-                        settings.uniforms = (scene.modes[mode].shaders && scene.modes[mode].shaders.uniforms);
+                        settings.uniforms = (scene.styles[style].shaders && scene.styles[style].shaders.uniforms);
                         settings.state = {}; // dat.gui needs a single object to old state
 
-                        this.folder = mode[0].toUpperCase() + mode.slice(1); // capitalize first letter
+                        this.folder = style[0].toUpperCase() + style.slice(1); // capitalize first letter
                         settings.folder = gui.addFolder(this.folder);
                         settings.folder.open();
 
-                        settings.setup(mode);
+                        settings.setup(style);
 
-                        if (settings.folder.__controllers.length == 0) {
+                        if (settings.folder.__controllers.length === 0) {
                             gui.removeFolder(this.folder);
                         }
                     }
@@ -270,11 +124,8 @@
             }
 
             // Recompile/rebuild
-            scene.createCamera();
-            scene.createLighting();
-            scene.refreshModes();
-            scene.rebuild();
-            updateURL();
+            scene.updateConfig();
+            scene.rebuildGeometry();
 
             // Force-update dat.gui
             for (var i in gui.__controllers) {
@@ -282,25 +133,19 @@
             }
         },
         settings: {
-            'colorbleed': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
-
-                    this.state.animated = scene.modes[mode].shaders.defines['EFFECT_COLOR_BLEED_ANIMATED'];
-                    this.folder.add(this.state, 'animated').onChange(function(value) {
-                        scene.modes[mode].shaders.defines['EFFECT_COLOR_BLEED_ANIMATED'] = value;
-                        scene.refreshModes();
-                    });
+            'water': {
+                setup: function (style) {
+                    scene.config.layers.water.style.name = style;
                 }
             },
             'rainbow': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
                 }
             },
             'popup': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
 
                     this.state.popup_radius = this.uniforms.u_popup_radius;
                     this.folder.add(this.state, 'popup_radius', 0, 500).onChange(function(value) {
@@ -316,13 +161,13 @@
                 }
             },
             'elevator': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
                 }
             },
             'breathe': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
 
                     this.state.breathe_scale = this.uniforms.u_breathe_scale;
                     this.folder.add(this.state, 'breathe_scale', 0, 50).onChange(function(value) {
@@ -338,18 +183,18 @@
                 }
             },
             'dots': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
 
-                    this.state.background = gl_mode_options.scaleColor(this.uniforms.u_dot_background_color, 255);
+                    this.state.background = style_options.scaleColor(this.uniforms.u_dot_background_color, 255);
                     this.folder.addColor(this.state, 'background').onChange(function(value) {
-                        this.uniforms.u_dot_background_color = gl_mode_options.scaleColor(value, 1 / 255);
+                        this.uniforms.u_dot_background_color = style_options.scaleColor(value, 1 / 255);
                         scene.requestRedraw();
                     }.bind(this));
 
-                    this.state.dot_color = gl_mode_options.scaleColor(this.uniforms.u_dot_color, 255);
+                    this.state.dot_color = style_options.scaleColor(this.uniforms.u_dot_color, 255);
                     this.folder.addColor(this.state, 'dot_color').onChange(function(value) {
-                        this.uniforms.u_dot_color = gl_mode_options.scaleColor(value, 1 / 255);
+                        this.uniforms.u_dot_color = style_options.scaleColor(value, 1 / 255);
                         scene.requestRedraw();
                     }.bind(this));
 
@@ -367,18 +212,18 @@
                 }
             },
             'wood': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
 
-                    this.state.wood_color1 = gl_mode_options.scaleColor(this.uniforms.u_wood_color1, 255);
+                    this.state.wood_color1 = style_options.scaleColor(this.uniforms.u_wood_color1, 255);
                     this.folder.addColor(this.state, 'wood_color1').onChange(function(value) {
-                        this.uniforms.u_wood_color1 = gl_mode_options.scaleColor(value, 1 / 255);
+                        this.uniforms.u_wood_color1 = style_options.scaleColor(value, 1 / 255);
                         scene.requestRedraw();
                     }.bind(this));
 
-                    this.state.wood_color2 = gl_mode_options.scaleColor(this.uniforms.u_wood_color2, 255);
+                    this.state.wood_color2 = style_options.scaleColor(this.uniforms.u_wood_color2, 255);
                     this.folder.addColor(this.state, 'wood_color2').onChange(function(value) {
-                        this.uniforms.u_wood_color2 = gl_mode_options.scaleColor(value, 1 / 255);
+                        this.uniforms.u_wood_color2 = style_options.scaleColor(value, 1 / 255);
                         scene.requestRedraw();
                     }.bind(this));
 
@@ -402,13 +247,11 @@
                 }
             },
             'colorhalftone': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
-                    scene.styles.layers.water.mode = { name: mode };
-                    scene.styles.layers.landuse.mode = { name: mode };
-                    scene.styles.layers.earth.mode = { name: mode };
-
-                    scene.styles.layers.pois.visible = false;
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
+                    scene.config.layers.water.style.name = style;
+                    scene.config.layers.landuse.style.name = style;
+                    scene.config.layers.earth.style.name = style;
 
                     this.state.dot_frequency = this.uniforms.dot_frequency;
                     this.folder.add(this.state, 'dot_frequency', 0, 200).onChange(function(value) {
@@ -430,25 +273,23 @@
                 }
             },
             'halftone': {
-                setup: function (mode) {
-                    Object.keys(scene.styles.layers).forEach(function(l) {
-                        scene.styles.layers[l].mode = { name: mode };
+                setup: function (style) {
+                    Object.keys(scene.config.layers).forEach(function(l) {
+                        scene.config.layers[l].style.name = style;
                     });
 
-                    scene.styles.layers.earth.visible = false;
-                    scene.styles.layers.pois.visible = false;
+                    scene.config.layers.earth.style.visible = false;
                 }
             },
             'windows': {
-                camera: 'isometric', // force isometric
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
-                    scene.styles.layers.pois.visible = false;
+                camera: 'isometric',
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
                 }
             },
             'envmap': {
-                setup: function (mode) {
-                    scene.styles.layers.buildings.mode = { name: mode };
+                setup: function (style) {
+                    scene.config.layers.buildings.style.name = style;
 
                     var envmaps = {
                         'Chrome': 'images/LitSphere_test_02.jpg',
@@ -465,10 +306,10 @@
                 }
             }
         },
-        initial: { // initial state to restore to on mode switch
+        initial: { // initial state to restore to on style switch
             layers: {}
         },
-        folder: null, // set to current (if any) DAT.gui folder name, cleared on mode switch
+        folder: null, // set to current (if any) DAT.gui folder name, cleared on style switch
         scaleColor: function (c, factor) { // convenience for converting between uniforms (0-1) and DAT colors (0-255)
             if ((typeof c == 'string' || c instanceof String) && c[0].charAt(0) == "#") {
                 // convert from hex to rgb
@@ -508,56 +349,76 @@
             'Perspective': 'perspective',
             'Isometric': 'isometric'
         };
-        gui.camera = layer.scene.styles.camera.type;
+        gui.camera = layer.scene.config.camera.type;
         gui.add(gui, 'camera', camera_types).onChange(function(value) {
-            layer.scene.styles.camera.type = value;
-            layer.scene.refreshCamera();
+            layer.scene.config.camera.type = value;
+            layer.scene.updateConfig();
         });
 
         // Lighting
-        var lighting_types = {
-            'None': null,
-            'Diffuse': 'diffuse',
-            'Specular': 'specular',
-            'Flat': 'flat',
-            'Night': 'night'
+        var lighting_presets = {
+            'Point': {
+                type: 'point',
+                position: [0, 0, 200],
+                ambient: 0.5,
+                backlight: true
+            },
+            'Directional': {
+                type: 'directional',
+                direction: [-1, 0, -.5],
+                ambient: 0.5
+            },
+            'Spotlight': {
+                type: 'spotlight',
+                position: [0, 0, 500],
+                direction: [0, 0, -1],
+                inner_angle: 20,
+                outer_angle: 25,
+                ambient: 0.2
+            },
+            'Night': {
+                type: 'point',
+                position: [0, 0, 50],
+                ambient: 0,
+                backlight: false
+            }
         };
-        gui.lighting = layer.scene.styles.lighting.type;
-        gui.add(gui, 'lighting', lighting_types).onChange(function(value) {
-            layer.scene.styles.lighting.type = value;
-            layer.scene.refreshLighting();
+        var lighting_options = Object.keys(lighting_presets);
+        for (var k=0; k < lighting_options.length; k++) {
+            if (lighting_presets[lighting_options[k]].type === layer.scene.config.lighting.type) {
+                gui.lighting = lighting_options[k];
+                break;
+            }
+        }
+        gui.add(gui, 'lighting', lighting_options).onChange(function(value) {
+            layer.scene.config.lighting = lighting_presets[value];
+            layer.scene.updateConfig();
         });
 
         // Feature selection on hover
         gui['feature info'] = true;
         gui.add(gui, 'feature info');
 
-        // Screenshot
-        gui.screenshot = function () {
-            gui.queue_screenshot = true;
-        };
-        gui.add(gui, 'screenshot');
-
         // Layers
         var layer_gui = gui.addFolder('Layers');
         var layer_controls = {};
-        layer.scene.layers.forEach(function(l) {
-            if (layer.scene.styles.layers[l.name] == null) {
+        Object.keys(layer.scene.config.layers).forEach(function(l) {
+            if (layer.scene.config.layers[l] == null) {
                 return;
             }
 
-            layer_controls[l.name] = !(layer.scene.styles.layers[l.name].visible == false);
+            layer_controls[l] = !(layer.scene.config.layers[l].style.visible == false);
             layer_gui.
-                add(layer_controls, l.name).
+                add(layer_controls, l).
                 onChange(function(value) {
-                    layer.scene.styles.layers[l.name].visible = value;
-                    layer.scene.rebuild();
+                    layer.scene.config.layers[l].style.visible = value;
+                    layer.scene.rebuildGeometry();
                 });
         });
 
-        // Modes
-        gui.add(gl_mode_options, 'effect', gl_mode_options.options).
-            onChange(gl_mode_options.setup.bind(gl_mode_options));
+        // Styles
+        gui.add(style_options, 'effect', style_options.options).
+            onChange(style_options.setup.bind(style_options));
     }
 
     // Feature selection
@@ -579,40 +440,35 @@
 
             var pixel = { x: event.clientX, y: event.clientY };
 
-            scene.getFeatureAt(
-                pixel,
-                function (selection) {
-                    var feature = selection.feature;
-                    if (feature != null) {
-                        // console.log("selection map: " + JSON.stringify(feature));
+            scene.getFeatureAt(pixel).then(function(selection) {
+                var feature = selection.feature;
+                if (feature != null) {
+                    var label = '';
+                    if (feature.properties.name != null) {
+                        label = feature.properties.name;
+                    }
 
-                        var label = '';
-                        if (feature.properties.name != null) {
-                            label = feature.properties.name;
-                        }
+                    // if (feature.properties.layer == 'buildings' && feature.properties.height) {
+                    //     if (label != '') {
+                    //         label += '<br>';
+                    //     }
+                    //     label += feature.properties.height + 'm';
+                    // }
 
-                        // if (feature.properties.layer == 'buildings' && feature.properties.height) {
-                        //     if (label != '') {
-                        //         label += '<br>';
-                        //     }
-                        //     label += feature.properties.height + 'm';
-                        // }
-
-                        if (label != '') {
-                            selection_info.style.left = (pixel.x + 5) + 'px';
-                            selection_info.style.top = (pixel.y + 15) + 'px';
-                            selection_info.innerHTML = '<span class="labelInner">' + label + '</span>';
-                            scene.container.appendChild(selection_info);
-                        }
-                        else if (selection_info.parentNode != null) {
-                            selection_info.parentNode.removeChild(selection_info);
-                        }
+                    if (label != '') {
+                        selection_info.style.left = (pixel.x + 5) + 'px';
+                        selection_info.style.top = (pixel.y + 15) + 'px';
+                        selection_info.innerHTML = '<span class="labelInner">' + label + '</span>';
+                        scene.container.appendChild(selection_info);
                     }
                     else if (selection_info.parentNode != null) {
                         selection_info.parentNode.removeChild(selection_info);
                     }
                 }
-            );
+                else if (selection_info.parentNode != null) {
+                    selection_info.parentNode.removeChild(selection_info);
+                }
+            });
 
             // Don't show labels while panning
             if (scene.panning == true) {
@@ -623,80 +479,17 @@
         });
     }
 
-
-    function animationFrame(cb) {
-        if (typeof window.requestAnimationFrame === 'function') {
-            return window.requestAnimationFrame;
-        } else {
-            return window.webkitRequestAnimationFrame ||
-                window.mozRequestAnimationFrame    ||
-                window.oRequestAnimationFrame      ||
-                window.msRequestAnimationFrame     ||
-                function (cb) {
-                    setTimeout(cb, 1000 /60);
-                };
-        }
-    }
-
-    function frame () {
-
-        if (rS != null) { // rstats
-            rS('frame').start();
-            // rS('raf').tick();
-            rS('fps').frame();
-
-            if (scene.dirty) {
-                glS.start();
-            }
-        }
-
-        layer.render();
-
-        if (rS != null) { // rstats
-            rS('frame').end();
-            rS('rendertiles').set(scene.renderable_tiles_count);
-            rS('glbuffers').set((scene.getDebugSum('buffer_size') / (1024*1024)).toFixed(2));
-            rS('features').set(scene.getDebugSum('features'));
-            rS().update();
-        }
-
-        // Screenshot needs to happen in the requestAnimationFrame callback, or the frame buffer might already be cleared
-        if (gui.queue_screenshot == true) {
-            gui.queue_screenshot = false;
-            screenshot();
-        }
-
-        animationFrame()(frame);
-    }
-
     /***** Render loop *****/
     window.addEventListener('load', function () {
         // Scene initialized
         layer.on('init', function() {
             addGUI();
-
-            if (url_mode) {
-                gl_mode_options.setup(url_mode);
-            } else {
-                scene.refreshModes();
-            }
-            updateURL();
-
             initFeatureSelection();
         });
         layer.addTo(map);
 
-        if (osm_debug == true) {
-            window.osm_layer =
-                L.tileLayer(
-                    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    { opacity: 0.5 })
-                .bringToFront()
-                .addTo(map);
-        }
-
-        frame();
     });
 
 
 }());
+

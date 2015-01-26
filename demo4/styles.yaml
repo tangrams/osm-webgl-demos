@@ -5,51 +5,79 @@ camera:
 lighting:
     type: directional
 
+sources:
+    osm:
+        type: 'GeoJSONTileSource'
+        url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
+
 layers:
-    cycleway:
-        filter: function () { return feature.highway == "cycleway"; }
-        color:
-            default: [.8, 0, 0.8]
-        width:
-            default: Style.pixels(5)
-
-    bridges:
-        filter: function () { return feature.is_bridge == "yes"; }
-        color:
-            default: [0, 0.8, 0.8]
-        width:
-            default: Style.pixels(10)
-
-    roads:
-        properties:
-            width: 2
-        color:
-            default: [1, 1, 1]
-        width:
-            default: function () { return properties.width; }
-
-    buildings:
-        mode:
-            name: buildings
-        properties:
-            min_height: 5
-        filter: function () { return feature.height > properties.min_height; }
-        extrude:
-            default: true
-
     earth:
-        color:
-            default: [.5, .5, .5]
+        geometry:
+            source: osm
+            filter: earth
+        style:
+            order: 0
+            color: [.5, .5, .5]
 
     landuse:
-        color:
-            default: [.6, .6, .6]
+        geometry:
+            source: osm
+            filter: landuse
+        style:
+            order: 1
+            color: [.6, .6, .6]
 
     water:
-        color:
-            default: [.4, .4, .4]
+        geometry:
+            source: osm
+            filter: water
+        style:
+            order: 2
+            color: [.4, .4, .4]
 
-modes:
+    roads:
+        geometry:
+            source: osm
+            filter: roads
+        properties:
+            width: 3
+        style:
+            order: 2
+            color: [1, 1, 1]
+            # width: 2
+            width: function () { return properties.width; }
+
+        cycleway:
+            filter: { highway: "cycleway" }
+            style:
+                color: [.8, 0, .8]
+                width: function () { return properties.width * 2; }
+
+
+        bridges:
+            filter: { is_bridge: "yes" }
+            properties:
+                width: 3
+            style:
+                color: [0, .8, .8]
+                width: function () { return properties.width * 3; }
+
+    buildings:
+        geometry:
+            source: osm
+            filter: buildings
+        filter: function () { return feature.height > properties.min_height; }
+        properties:
+            min_height: 5
+        style:
+            order: 4
+            name: buildings
+            color: black # must set a vertex color for shader to be applied
+            extrude:
+                default: true
+
+
+styles:
     buildings:
         extends: polygons
         shaders:
@@ -57,11 +85,7 @@ modes:
                 u_height: 0
                 u_color_height: 0
             transforms:
-                globals: |
-                    uniform float u_height;
-                    uniform float u_color_height;
-                vertex: |
-                    position.z *= u_height * .01;
+                vertex: position.z *= u_height * .01;
                 fragment: |
-                    if (v_world_position.z > u_color_height) color = lighting * vec3(.8);
-                    else color = lighting * vec3(.5);
+                    if (v_world_position.z > u_color_height) color.rgb = lighting * vec3(.8);
+                    else color.rgb = lighting * vec3(.5);

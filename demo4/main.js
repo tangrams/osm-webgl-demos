@@ -33,12 +33,7 @@
 
     // Tangram layer
     var layer = Tangram.leafletLayer({
-        vectorTileSource: {
-            type: 'GeoJSONTileSource',
-            url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
-        },
-        vectorLayers: 'layers.yaml',
-        vectorStyles: 'styles.yaml',
+        scene: 'styles.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
@@ -59,50 +54,52 @@
     function addGUI () {
         var gui = new dat.GUI();
         gui.domElement.parentNode.style.zIndex = 5; // make sure GUI is on top of map
-        window.gui = gui;
 
-        // add visibility toggles for each layer, in a folder
+        // add color controls for each layer
         var layer_gui = gui.addFolder('Layers');
+        var layer_colors = {};
         var layer_controls = {};
-        scene.layers.forEach(function(l) {
-            if (scene.styles.layers[l.name] == null) {
+        Object.keys(scene.config.layers).forEach(function(l) {
+            if (scene.config.layers[l] == null) {
                 return;
             }
 
-            layer_controls[l.name] = !(scene.styles.layers[l.name].visible == false);
+            layer_controls[l] = !(scene.config.layers[l].style.visible == false);
             layer_gui.
-                add(layer_controls, l.name).
+                add(layer_controls, l).
                 onChange(function(value) {
-                    scene.styles.layers[l.name].visible = value;
-                    scene.rebuild();
+                    scene.config.layers[l].style.visible = value;
+                    scene.rebuildGeometry();
                 });
         });
-
+ 
         gui["building height"] = 0;
         var bheight = gui.add(gui, "building height", 0, 150);
         bheight.onChange(function(value) {
-            scene.styles.modes.buildings.shaders.uniforms.u_height = value;
-            scene.requestRedraw();
+            scene.config.styles["buildings"].shaders.uniforms.u_height = value;
+            scene.dirty = true;
+
         });
         gui["geo filter"] = 0;
         var geoheight = gui.add(gui, "geo filter", 0, 150);
         geoheight.onChange(function(value) {
-            scene.styles.layers.buildings.properties.min_height = value;
-            scene.rebuild();
+            scene.config.layers["buildings"].properties.min_height = value;
+            scene.rebuildGeometry();
         });
         gui["shader filter"] = 0;
         var height = gui.add(gui, "shader filter", 0, 150);
         height.onChange(function(value) {
-            scene.styles.modes.buildings.shaders.uniforms.u_color_height = value;
-            scene.requestRedraw();
+            scene.config.styles["buildings"].shaders.uniforms.u_color_height = value;
+            scene.dirty = true;
         });
 
         gui.roadwidth = 5;
         var roadwidth = gui.add(gui, "roadwidth", 0, 100);
         // roadwidth.onFinishChange(function(value) {
         roadwidth.onChange(function(value) {
-            scene.styles.layers.roads.properties.width = value;
-            scene.rebuild();
+            scene.config.layers["roads"].properties.width = value;
+            scene.config.layers["roads"].bridges.properties.width = value;
+            scene.rebuildGeometry();
         });
 
     }

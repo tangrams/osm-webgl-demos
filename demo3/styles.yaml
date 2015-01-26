@@ -1,73 +1,109 @@
+sources:
+    local:
+        type: 'GeoJSONTileSource'
+        url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
+        max_zoom: 16
+
 layers:
     earth:
-        mode:
-            name: earth-mode
+        geometry:
+            source: local
+            filter: earth
+        style:
+            order: 1
+            color: black # must set a vertex color for shader to be applied
+            name: earth-style
 
     landuse:
-        mode:
-            name: landuse-mode
+        geometry:
+            source: local
+            filter: landuse
+        style:
+            order: 2
+            color: black
+            name: landuse-style
 
     water:
-        mode:
-            name: water-mode
+        geometry:
+            source: local
+            filter: water
+        style:
+            order: 3
+            color: black
+            name: water-style
 
     roads:
-        mode:
-            name: roads-mode
-        width:
-            default: 2
-            highway: 20
-            major_road: 10
-            minor_road: 5
-            path: 1
+        geometry:
+            source: local
+            filter: roads
+        style:
+            order: 4
+            name: roads-style
+            color: black
+            width: 2
+        highway:
+            filter: { kind: highway }
+            style:
+                width: 20
+        major_road:
+            filter: { kind: major_road }
+            style:
+                width: 10
+        minor_road:
+            filter: { kind: minor_road }
+            style:
+                width: 5
+        path: 
+            filter: { kind: path }
+            style:
+                width: 1
 
     buildings:
-        mode:
-            name: buildings-mode
+        geometry:
+            source: local
+            filter: buildings
+        style:
+            order: 5
+            color: black
+            name: buildings-style
 
-modes:
-    buildings-mode:
+styles:
+    buildings-style:
         extends: polygons
         shaders:
             uniforms:
                 u_color: [.8, .8, .8]
             transforms:
-                globals: uniform vec3 u_color;
-                fragment: color = u_color;
+                fragment: color.rgb = u_color;
 
-    earth-mode:
+    earth-style:
         extends: polygons
         shaders:
             uniforms:
                 u_color: [.5, .5, .5]
             transforms:
-                globals: uniform vec3 u_color;
-                fragment: color = u_color;
+                fragment: color.rgb = u_color;
 
-    landuse-mode:
+    landuse-style:
         extends: polygons
         shaders:
             uniforms:
                 u_color: [.6, .6, .6]
             transforms:
-                globals: uniform vec3 u_color;
-                fragment: color = u_color;
+                fragment: color.rgb = u_color;
 
-    water-mode:
+    water-style:
         extends: polygons
         shaders:
             uniforms:
                 u_color: [.4, .4, .4]
             transforms:
-                globals: uniform vec3 u_color;
-                fragment: color = u_color;
+                fragment: color.rgb = u_color;
 
-    roads-mode:
+    roads-style:
         extends: polygons
         shaders:
             uniforms:
                 u_color: [1, 1, 1]
             transforms:
-                globals:
-                    uniform vec3 u_color;
-                fragment: color = u_color;
+                fragment: color.rgb = u_color;
