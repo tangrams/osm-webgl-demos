@@ -34,8 +34,8 @@
     function addGUI () {
         window.gui = gui;
         gui.domElement.parentNode.style.zIndex = 5; // make sure GUI is on top of map
-        // add visibility toggles for each layer
 
+        // add visibility toggles for each layer
         var layer_controls = {};
         Object.keys(scene.config.layers).forEach(function(l) {
             if (scene.config.layers[l] == null) {
