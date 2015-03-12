@@ -3,9 +3,6 @@ osm-webgl-demos
 
 A series of demonstrations originlly made for Mozfest14 showing how OpenStreetMap vector data can be displayed and manipulated in a browser using WebGL.
 
-###Mozfest14 etherpad link:
-https://festival.etherpad.mozilla.org/WyaCRtedyS
-
 ### Live version
 
 http://tangrams.github.io/osm-webgl-demos/
@@ -26,3 +23,7 @@ Then navigate in a WebGL-supporting browser to: [http://localhost:8000](http://l
 List of WebGL-supporting browsers: [http://caniuse.com/#feat=webgl](http://caniuse.com/#feat=webgl)
 
 Check if your browser supports WebGL: [http://get.webgl.org/](http://get.webgl.org)
+
+###Mozfest14 etherpad link:
+https://festival.etherpad.mozilla.org/WyaCRtedyS
+
