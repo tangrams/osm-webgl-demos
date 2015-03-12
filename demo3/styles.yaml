@@ -74,7 +74,7 @@ styles:
             uniforms:
                 u_color: [.8, .8, .8]
             transforms:
-                fragment: color.rgb = u_color;
+                color: color.rgb = u_color;
 
     earth-style:
         extends: polygons
@@ -82,7 +82,7 @@ styles:
             uniforms:
                 u_color: [.5, .5, .5]
             transforms:
-                fragment: color.rgb = u_color;
+                color: color.rgb = u_color;
 
     landuse-style:
         extends: polygons
@@ -90,7 +90,7 @@ styles:
             uniforms:
                 u_color: [.6, .6, .6]
             transforms:
-                fragment: color.rgb = u_color;
+                color: color.rgb = u_color;
 
     water-style:
         extends: polygons
@@ -98,7 +98,7 @@ styles:
             uniforms:
                 u_color: [.4, .4, .4]
             transforms:
-                fragment: color.rgb = u_color;
+                color: color.rgb = u_color;
 
     roads-style:
         extends: polygons
@@ -106,4 +106,4 @@ styles:
             uniforms:
                 u_color: [1, 1, 1]
             transforms:
-                fragment: color.rgb = u_color;
+                color: color.rgb = u_color;
