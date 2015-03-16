@@ -6,36 +6,36 @@ sources:
 
 layers:
     earth:
-        geometry:
+        data:
             source: local
-            filter: earth
+            layer: earth
         style:
             order: 1
             color: black # must set a vertex color for shader to be applied
             name: earth-style
 
     landuse:
-        geometry:
+        data:
             source: local
-            filter: landuse
+            layer: landuse
         style:
             order: 2
             color: black
             name: landuse-style
 
     water:
-        geometry:
+        data:
             source: local
-            filter: water
+            layer: water
         style:
             order: 3
             color: black
             name: water-style
 
     roads:
-        geometry:
+        data:
             source: local
-            filter: roads
+            layer: roads
         style:
             order: 4
             name: roads-style
@@ -59,9 +59,9 @@ layers:
                 width: 1
 
     buildings:
-        geometry:
+        data:
             source: local
-            filter: buildings
+            layer: buildings
         style:
             order: 5
             color: black
@@ -73,7 +73,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [.5, .5, .5]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     earth-style:
@@ -81,7 +81,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [.6, .6, .6]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     landuse-style:
@@ -89,7 +89,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [.4, .4, .4]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     water-style:
@@ -97,7 +97,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [1., 1., 1.]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     roads-style:
@@ -105,5 +105,5 @@ styles:
         shaders:
             uniforms:
                 u_color: [.8, .8, .8]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;

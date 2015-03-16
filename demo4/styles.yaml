@@ -12,33 +12,33 @@ sources:
 
 layers:
     earth:
-        geometry:
+        data:
             source: osm
-            filter: earth
+            layer: earth
         style:
             order: 0
             color: [.5, .5, .5]
 
     landuse:
-        geometry:
+        data:
             source: osm
-            filter: landuse
+            layer: landuse
         style:
             order: 1
             color: [.6, .6, .6]
 
     water:
-        geometry:
+        data:
             source: osm
-            filter: water
+            layer: water
         style:
             order: 2
             color: [.4, .4, .4]
 
     roads:
-        geometry:
+        data:
             source: osm
-            filter: roads
+            layer: roads
         properties:
             width: 3
         style:
@@ -62,9 +62,9 @@ layers:
                 width: function () { return properties.width * 3; }
 
     buildings:
-        geometry:
+        data:
             source: osm
-            filter: buildings
+            layer: buildings
         filter: function () { return feature.height > properties.min_height; }
         properties:
             min_height: 5
@@ -83,7 +83,7 @@ styles:
             uniforms:
                 u_height: 0
                 u_color_height: 0
-            transforms:
+            blocks:
                 vertex: position.z *= u_height * .01;
                 color: |
                     if (v_world_position.z > u_color_height) color.rgb = vec3(.8);
