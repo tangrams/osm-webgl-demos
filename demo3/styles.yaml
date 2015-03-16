@@ -8,7 +8,7 @@ layers:
     earth:
         data:
             source: local
-            filter: earth
+            layer: earth
         style:
             order: 1
             color: black # must set a vertex color for shader to be applied
@@ -17,7 +17,7 @@ layers:
     landuse:
         data:
             source: local
-            filter: landuse
+            layer: landuse
         style:
             order: 2
             color: black
@@ -26,7 +26,7 @@ layers:
     water:
         data:
             source: local
-            filter: water
+            layer: water
         style:
             order: 3
             color: black
@@ -35,7 +35,7 @@ layers:
     roads:
         data:
             source: local
-            filter: roads
+            layer: roads
         style:
             order: 4
             name: roads-style
@@ -61,7 +61,7 @@ layers:
     buildings:
         data:
             source: local
-            filter: buildings
+            layer: buildings
         style:
             order: 5
             color: black

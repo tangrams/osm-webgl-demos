@@ -15,7 +15,7 @@ styles:
     # all:
     #     shaders:
     #         blocks:
-    #             fragment: { url: shaders/spotlight.glsl }
+    #             color: { url: shaders/spotlight.glsl }
 
     water:
         extends: polygons
@@ -26,7 +26,7 @@ styles:
             blocks:
                 globals:
                     url: shaders/glsl-noise-periodic-3d.glsl
-                fragment:
+                color:
                     url: shaders/noise.glsl
 
     rainbow:
@@ -40,7 +40,7 @@ styles:
                         vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
                         return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
                     }
-                fragment: |
+                color: |
                     vec3 c = vec3(v_world_position.z * .003 + u_time / 10., 1.0, 1.0);
                     color.rgb = hsv2rgb(c);
 
@@ -86,7 +86,7 @@ layers:
     earth:
         data:
             source: osm
-            filter: earth
+            layer: earth
         style:
             order: 0
             color: [.3, .3, .3]
@@ -94,7 +94,7 @@ layers:
     landuse:
         data:
             source: osm
-            filter: landuse
+            layer: landuse
         style:
             interactive: true
             order: 1
@@ -112,7 +112,7 @@ layers:
     water:
         data:
             source: osm
-            filter: water
+            layer: water
         style:
             interactive: true
             order: 2
@@ -131,7 +131,7 @@ layers:
     roads:
         data:
             source: osm
-            filter: roads
+            layer: roads
         style:
             interactive: function () { return (zoom >= 18); }
             color: [0.4, 0.4, 0.4]
@@ -169,7 +169,7 @@ layers:
     buildings:
         data:
             source: osm
-            filter: buildings
+            layer: buildings
         style:
             interactive: true
             order: 5

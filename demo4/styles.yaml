@@ -14,7 +14,7 @@ layers:
     earth:
         data:
             source: osm
-            filter: earth
+            layer: earth
         style:
             order: 0
             color: [.5, .5, .5]
@@ -22,7 +22,7 @@ layers:
     landuse:
         data:
             source: osm
-            filter: landuse
+            layer: landuse
         style:
             order: 1
             color: [.6, .6, .6]
@@ -30,7 +30,7 @@ layers:
     water:
         data:
             source: osm
-            filter: water
+            layer: water
         style:
             order: 2
             color: [.4, .4, .4]
@@ -38,7 +38,7 @@ layers:
     roads:
         data:
             source: osm
-            filter: roads
+            layer: roads
         properties:
             width: 3
         style:
@@ -64,7 +64,7 @@ layers:
     buildings:
         data:
             source: osm
-            filter: buildings
+            layer: buildings
         filter: function () { return feature.height > properties.min_height; }
         properties:
             min_height: 5
