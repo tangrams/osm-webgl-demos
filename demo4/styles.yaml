@@ -44,7 +44,6 @@ layers:
         style:
             order: 2
             color: [1, 1, 1]
-            # width: 2
             width: function () { return properties.width; }
 
         cycleway:
@@ -86,6 +85,6 @@ styles:
                 u_color_height: 0
             transforms:
                 vertex: position.z *= u_height * .01;
-                fragment: |
-                    if (v_world_position.z > u_color_height) color.rgb = lighting * vec3(.8);
-                    else color.rgb = lighting * vec3(.5);
+                color: |
+                    if (v_world_position.z > u_color_height) color.rgb = vec3(.8);
+                    else color.rgb = vec3(.5);
