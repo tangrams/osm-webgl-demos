@@ -8,12 +8,12 @@ styles:
     transparent:
         extends: polygons
         shaders:
-            transforms:
+            blocks:
                 fragment: if (color == vec4(0.)) discard;
 
 layers:
     earth:
-        geometry:
+        data:
             source: local
             filter: earth
         style:
@@ -26,7 +26,7 @@ layers:
                 tile_edges: true
 
     landuse:
-        geometry:
+        data:
             source: local
             filter: landuse
         style:
@@ -38,7 +38,7 @@ layers:
                 width: 2px
 
     water:
-        geometry:
+        data:
             source: local
             filter: water
         style:
@@ -51,7 +51,7 @@ layers:
                 tile_edges: true
 
     roads:
-        geometry:
+        data:
             source: local
             filter: roads
         style:
@@ -76,7 +76,7 @@ layers:
                 width: 3
 
     buildings:
-        geometry:
+        data:
             source: local
             filter: buildings
         style:

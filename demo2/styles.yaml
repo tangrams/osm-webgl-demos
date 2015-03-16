@@ -6,7 +6,7 @@ sources:
 
 layers:
     earth:
-        geometry:
+        data:
             source: local
             filter: earth
         style:
@@ -15,7 +15,7 @@ layers:
             name: earth-style
 
     landuse:
-        geometry:
+        data:
             source: local
             filter: landuse
         style:
@@ -24,7 +24,7 @@ layers:
             name: landuse-style
 
     water:
-        geometry:
+        data:
             source: local
             filter: water
         style:
@@ -33,7 +33,7 @@ layers:
             name: water-style
 
     roads:
-        geometry:
+        data:
             source: local
             filter: roads
         style:
@@ -59,7 +59,7 @@ layers:
                 width: 1
 
     buildings:
-        geometry:
+        data:
             source: local
             filter: buildings
         style:
@@ -73,7 +73,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [.5, .5, .5]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     earth-style:
@@ -81,7 +81,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [.6, .6, .6]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     landuse-style:
@@ -89,7 +89,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [.4, .4, .4]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     water-style:
@@ -97,7 +97,7 @@ styles:
         shaders:
             uniforms:
                 u_color: [1., 1., 1.]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;
 
     roads-style:
@@ -105,5 +105,5 @@ styles:
         shaders:
             uniforms:
                 u_color: [.8, .8, .8]
-            transforms:
+            blocks:
                 color: color.rgb = u_color;

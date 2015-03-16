@@ -14,7 +14,7 @@ styles:
     # note: consider this syntax as a special case for global mode settings
     # all:
     #     shaders:
-    #         transforms:
+    #         blocks:
     #             fragment: { url: shaders/spotlight.glsl }
 
     water:
@@ -23,7 +23,7 @@ styles:
         shaders:
             defines:
                 EFFECT_NOISE_ANIMATED: true
-            transforms:
+            blocks:
                 globals:
                     url: shaders/glsl-noise-periodic-3d.glsl
                 fragment:
@@ -33,7 +33,7 @@ styles:
         extends: polygons
         animated: true
         shaders:
-            transforms:
+            blocks:
                 globals: |
                     vec3 hsv2rgb(vec3 c) {
                         vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
@@ -49,7 +49,7 @@ styles:
         extends: polygons
         animated: true
         shaders:
-            transforms:
+            blocks:
                 vertex: position.z *= (sin(position.z + u_time) + 1.0); // elevator buildings
                 # vertex: { url: shaders/elevator.glsl }
 
@@ -84,7 +84,7 @@ styles:
 
 layers:
     earth:
-        geometry:
+        data:
             source: osm
             filter: earth
         style:
@@ -92,7 +92,7 @@ layers:
             color: [.3, .3, .3]
 
     landuse:
-        geometry:
+        data:
             source: osm
             filter: landuse
         style:
@@ -110,7 +110,7 @@ layers:
 
 
     water:
-        geometry:
+        data:
             source: osm
             filter: water
         style:
@@ -129,7 +129,7 @@ layers:
                     }
 
     roads:
-        geometry:
+        data:
             source: osm
             filter: roads
         style:
@@ -167,7 +167,7 @@ layers:
                 width: function () { return 2 * Math.log(zoom); }
 
     buildings:
-        geometry:
+        data:
             source: osm
             filter: buildings
         style:
