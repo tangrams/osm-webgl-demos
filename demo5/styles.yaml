@@ -1,22 +1,27 @@
-camera:
-    type: perspective
-    vanishing_point: [-.25, -.75] # slightly off-center viewing angle, towards lower-left of screen
-
-lighting:
-    type: point
-
 sources:
     osm:
-        type: 'GeoJSONTileSource'
-        url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
+        type: GeoJSONTileSource
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json
+
+cameras:
+    perspective:
+        type: perspective
+        # focal_length: 1
+        focal_length: [[16, 2], [17, 2.5], [18, 3], [19, 4], [20, 6]] # pairs of [zoom, focal len]
+        vanishing_point: [-250, -250] # relative to center of screen, in pixels
+    isometric:
+        type: isometric
+        axis: [0,1]
+ 
+lights:
+    key:
+        type: directional
+        direction: [-.2, 1, -1]
+        diffuse: 1
+        ambient: .6
+
 
 styles:
-    # note: consider this syntax as a special case for global mode settings
-    # all:
-    #     shaders:
-    #         blocks:
-    #             color: { url: shaders/spotlight.glsl }
-
     water:
         extends: polygons
         animated: true
@@ -26,7 +31,7 @@ styles:
             blocks:
                 globals:
                     url: shaders/glsl-noise-periodic-3d.glsl
-                color:
+                fragment:
                     url: shaders/noise.glsl
 
     rainbow:
@@ -44,34 +49,25 @@ styles:
                     vec3 c = vec3(v_world_position.z * .003 + u_time / 10., 1.0, 1.0);
                     color.rgb = hsv2rgb(c);
 
+    popup:
+        url: styles/popup.yaml
 
     elevator:
         extends: polygons
         animated: true
         shaders:
             blocks:
-                vertex: position.z *= (sin(position.z + u_time) + 1.0); // elevator buildings
-                # vertex: { url: shaders/elevator.glsl }
+                position: |
+                    // Elevator buildings
+                    if (position.z > 0.01) {
+                        position.z *= (sin(position.z + u_time) + 1.0);
+                    }
 
     breathe:
         url: styles/breathe.yaml
 
-    popup:
-        url: styles/popup.yaml
-
     dots:
         url: styles/dots.yaml
-
-    wood:
-        url: styles/wood.yaml
-
-    envmap:
-        extends: polygons
-        shaders:
-            defines:
-                LIGHTING_ENVIRONMENT: true
-            uniforms:
-                u_env_map: images/LitSphere_test_02.jpg
 
     halftone:
         url: styles/halftone.yaml
@@ -83,44 +79,43 @@ styles:
         url: styles/windows.yaml
 
 layers:
+
     earth:
         data:
             source: osm
             layer: earth
         style:
             order: 0
-            color: [.3, .3, .3]
+            color: [0.175, 0.175, 0.175]
 
     landuse:
         data:
             source: osm
             layer: landuse
         style:
-            interactive: true
             order: 1
-            color: [.5, .9, 0.5]
-            outline:
-                color: [0, .7, 0]
-                width: 2px
+            interactive: true
+            color: [0.5, 0.875, 0.5]
         pitch:
-            filter: { kind: pitch }
+            filter:
+                kind: ['pitch', 'garden', 'playground']
             style:
-                outline:
-                    color: [0, 1, 0]
-
+                color: [0.3, 0.675, 0.3]
+                order: .1
 
     water:
         data:
             source: osm
             layer: water
         style:
-            interactive: true
+            # name: water
             order: 2
-            color: [.4, .4, .6]
-        outline:
-            style:
+            interactive: true
+            color: [0.5, 0.5, 0.875]
+            outline:
                 color: [0.6, 0.6, 0.975]
-                width: function () {
+                width: |
+                    function () {
                         return (
                             zoom >= 16 &&
                             (feature.kind != 'ocean' && feature.kind != 'riverbank') &&
@@ -133,45 +128,68 @@ layers:
             source: osm
             layer: roads
         style:
+            order: function () { return 3.5 + Math.min(Math.max(feature.sort_key * .000025, -1), 1) / 2; }
             interactive: function () { return (zoom >= 18); }
-            color: [0.4, 0.4, 0.4]
-            width: function () { return 2 * Math.log(zoom); }
             outline:
-                color: [0.1, 0.7, 0.7]
-                width: function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
+                color: [0.7, 0.7, 0.7]
+                width: 1
+        highway:
+            filter: { kind: highway }
+            style:
+                color: [1.0, 1.0, 1.0]
+                width: 9
+            tunnel:
+                filter: { is_tunnel: yes }
+                style:
+                    color: '#333'
+                    width: 6
+                    outline:
+                        color: white
+                        width: 2
         major_road:
             filter: { kind: major_road }
             style:
                 color: [0.5, 0.5, 0.5]
-                width: function () { return 3 * Math.log(zoom); }
-                outline:
-                    width: function () { return (zoom >= 18 && (3/8 * Math.log(zoom))); }
+                width: 5
         minor_road:
             filter: { kind: minor_road }
             style:
                 color: [0.65, 0.65, 0.65]
-                width: function () { return 2 * Math.log(zoom); }
-                outline:
-                    width: function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
+                width: 4              
         path:
-            filter: { kind: path }
+            filter:
+               kind: path
             style:
                 color: [0.8, 0.8, 0.8]
-                width: function () { return 1 * Math.log(zoom); }
-                outline:
-                    width: function () { return (zoom >= 18 && (2/8 * Math.log(zoom))); }
+                width: 3
         rail:
-            filter: { kind: rail }
+            filter:
+                kind: rail
+                not: { is_tunnel: yes }
             style:
                 color: [0.5, 0.0, 0.0]
-                width: function () { return 2 * Math.log(zoom); }
+                width: 3
+                outline:
+                    width: .5
 
     buildings:
         data:
             source: osm
             layer: buildings
         style:
+            order: 4
             interactive: true
-            order: 5
-            color: function () { if (feature.name || feature.kind) { return [(feature.name && 0.6) || 0.2, 0.2, (feature.kind && 0.6) || 0.2]; } else { return [0.6, 0.6, 0.6] }; }
+            color: [.6, .6, .6]
             extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
+        namedBuildings:
+            filter: { name: true }
+            style:
+                color: [.6, .2, .2]
+            namedKindBuildings:
+                filter: { kind: true }
+                style:
+                    color: [.6, .2, .6]
+        kindBuildings:
+            filter: { name: false, kind: true }
+            style:
+                color: [.2, .2, .6]

@@ -51,13 +51,13 @@
                     scene.config.layers[l].style.visible = value;
                     scene.rebuildGeometry();
                 });
-            var c = scene.config.styles[l+"-style"].shaders.uniforms.u_color;
+            var c = scene.styles[l+"-style"].shaders.uniforms.u_color;
             layer_colors[l] = [c[0]*255, c[1]*255, c[2]*255];
             layer_gui.
                 addColor(layer_colors, l).
                 onChange(function(value) {
-                    scene.config.styles[l+"-style"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
-                    scene.dirty = true;
+                    scene.styles[l+"-style"].shaders.uniforms.u_color = [value[0]/255., value[1]/255., value[2]/255.];
+                    scene.requestRedraw();
                 });
 
         });

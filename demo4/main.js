@@ -76,8 +76,8 @@
         gui["building height"] = 0;
         var bheight = gui.add(gui, "building height", 0, 150);
         bheight.onChange(function(value) {
-            scene.config.styles["buildings"].shaders.uniforms.u_height = value;
-            scene.dirty = true;
+            scene.styles["buildings"].shaders.uniforms.u_height = value;
+            scene.requestRedraw();
 
         });
         gui["geo filter"] = 0;
@@ -89,17 +89,19 @@
         gui["shader filter"] = 0;
         var height = gui.add(gui, "shader filter", 0, 150);
         height.onChange(function(value) {
-            scene.config.styles["buildings"].shaders.uniforms.u_color_height = value;
-            scene.dirty = true;
+            scene.styles["buildings"].shaders.uniforms.u_color_height = value;
+            scene.requestRedraw();
         });
 
         gui.roadwidth = 5;
         var roadwidth = gui.add(gui, "roadwidth", 0, 100);
-        // roadwidth.onFinishChange(function(value) {
         roadwidth.onChange(function(value) {
             scene.config.layers["roads"].properties.width = value;
-            scene.config.layers["roads"].bridges.properties.width = value;
+            console.log(scene.config.layers["roads"].properties.width);
+            // scene.config.layers["roads"].style.width
+            // scene.config.layers["roads"].bridges.properties.width = value;
             scene.rebuildGeometry();
+            scene.requestRedraw();
         });
 
     }

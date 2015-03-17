@@ -2,8 +2,10 @@ camera:
     type: perspective
     vanishing_point: [-.25, -.75]
 
-lighting:
-    type: directional
+lights:
+    light1:
+        type: directional
+        diffuse: 2
 
 sources:
     osm:
@@ -14,7 +16,6 @@ layers:
     earth:
         data:
             source: osm
-            layer: earth
         style:
             order: 0
             color: [.5, .5, .5]
@@ -22,7 +23,6 @@ layers:
     landuse:
         data:
             source: osm
-            layer: landuse
         style:
             order: 1
             color: [.6, .6, .6]
@@ -30,21 +30,17 @@ layers:
     water:
         data:
             source: osm
-            layer: water
         style:
             order: 2
             color: [.4, .4, .4]
 
     roads:
-        data:
-            source: osm
-            layer: roads
-        properties:
-            width: 3
+        data: { source: osm }
         style:
+            properties: { mywidth: 3 }
             order: 2
             color: [1, 1, 1]
-            width: function () { return properties.width; }
+            width: function () { return properties.mywidth; }
 
         cycleway:
             filter: { highway: "cycleway" }
@@ -60,14 +56,14 @@ layers:
             style:
                 color: [0, .8, .8]
                 width: function () { return properties.width * 3; }
+                width: 9
 
     buildings:
         data:
             source: osm
-            layer: buildings
-        filter: function () { return feature.height > properties.min_height; }
         properties:
             min_height: 5
+        filter: function () { return feature.height > properties.min_height; }
         style:
             order: 4
             name: buildings
