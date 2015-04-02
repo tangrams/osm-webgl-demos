@@ -9,8 +9,8 @@ lights:
 
 sources:
     osm:
-        type: 'GeoJSONTileSource'
-        url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
+        type: MVTSource
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox
 
 layers:
     earth:
@@ -61,15 +61,22 @@ layers:
     buildings:
         data:
             source: osm
-        properties:
-            min_height: 5
-        filter: function () { return feature.height > properties.min_height; }
+
+        properties: { height: 150 }
         style:
             order: 4
-            name: buildings
-            color: black # must set a vertex color for shader to be applied
-            extrude:
-                default: true
+            color: function () { if (feature.height >= properties.height) { return [1,0,0]; } else { return [1,1,1]; } }
+            extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
+
+        # properties:
+        #     min_height: 5
+        # filter: function () { return feature.height > properties.min_height; }
+        # style:
+        #     order: 4
+        #     name: buildings
+        #     color: black # must set a vertex color for shader to be applied
+        #     extrude:
+        #         default: true
 
 
 styles:

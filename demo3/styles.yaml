@@ -1,14 +1,13 @@
 sources:
-    local:
-        type: 'GeoJSONTileSource'
-        url:  'http://vector.mapzen.com/osm/all/{z}/{x}/{y}.json'
+    osm:
+        type: MVTSource
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox
         max_zoom: 16
 
 layers:
     earth:
         data:
-            source: local
-            layer: earth
+            source: osm
         style:
             order: 1
             color: black # must set a vertex color for shader to be applied
@@ -16,8 +15,7 @@ layers:
 
     landuse:
         data:
-            source: local
-            layer: landuse
+            source: osm
         style:
             order: 2
             color: black
@@ -25,8 +23,7 @@ layers:
 
     water:
         data:
-            source: local
-            layer: water
+            source: osm
         style:
             order: 3
             color: black
@@ -34,8 +31,7 @@ layers:
 
     roads:
         data:
-            source: local
-            layer: roads
+            source: osm
         style:
             order: 4
             name: roads-style
@@ -60,8 +56,7 @@ layers:
 
     buildings:
         data:
-            source: local
-            layer: buildings
+            source: osm
         style:
             order: 5
             color: black
