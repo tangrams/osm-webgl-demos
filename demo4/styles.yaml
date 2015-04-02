@@ -14,30 +14,27 @@ sources:
 
 layers:
     earth:
-        data:
-            source: osm
+        data: { source: osm }
         style:
             order: 0
             color: [.5, .5, .5]
 
     landuse:
-        data:
-            source: osm
+        data: { source: osm }
         style:
             order: 1
             color: [.6, .6, .6]
 
     water:
-        data:
-            source: osm
+        data: { source: osm }
         style:
             order: 2
             color: [.4, .4, .4]
 
     roads:
         data: { source: osm }
+        properties: { mywidth: 3 }
         style:
-            properties: { mywidth: 3 }
             order: 2
             color: [1, 1, 1]
             width: function () { return properties.mywidth; }
@@ -59,24 +56,22 @@ layers:
                 width: 9
 
     buildings:
-        data:
-            source: osm
+        data: { source: osm }
 
-        properties: { height: 150 }
-        style:
-            order: 4
-            color: function () { if (feature.height >= properties.height) { return [1,0,0]; } else { return [1,1,1]; } }
-            extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
-
-        # properties:
-        #     min_height: 5
-        # filter: function () { return feature.height > properties.min_height; }
+        # properties: { height: 150 }
         # style:
         #     order: 4
-        #     name: buildings
-        #     color: black # must set a vertex color for shader to be applied
-        #     extrude:
-        #         default: true
+        #     color: function () { if (feature.height >= properties.height) { return [1,0,0]; } else { return [1,1,1]; } }
+        #     extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
+
+        properties:
+            min_height: 5
+        filter: function () { return feature.height > properties.min_height; }
+        style:
+            order: 4
+            name: buildings
+            color: black # must set a vertex color for shader to be applied
+            extrude: true
 
 
 styles:
@@ -87,7 +82,7 @@ styles:
                 u_height: 0
                 u_color_height: 0
             blocks:
-                vertex: position.z *= u_height * .01;
+                position: position.z *= u_height * .01;
                 color: |
                     if (v_world_position.z > u_color_height) color.rgb = vec3(.8);
                     else color.rgb = vec3(.5);
