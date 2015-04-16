@@ -71,9 +71,7 @@
                     scene.config.layers[l].style.visible = value;
                     scene.rebuildGeometry();
                 });
-            console.log(scene.config.layers[l].style);
             var c = scene.config.styles[l+"-style"].shaders.uniforms.u_color;
-            console.log(c);
             layer_colors[l] = [c[0]*255, c[1]*255, c[2]*255];
             layer_gui.
                 addColor(layer_colors, l).
