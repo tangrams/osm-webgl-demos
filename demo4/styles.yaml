@@ -9,69 +9,77 @@ lights:
 
 sources:
     osm:
-        type: MVTSource
+        type: MVT
         url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox
 
 layers:
     earth:
         data: { source: osm }
-        style:
-            order: 0
-            color: [.5, .5, .5]
+        draw:
+            polygons:
+                order: 0
+                color: [.5, .5, .5]
 
     landuse:
         data: { source: osm }
-        style:
-            order: 1
-            color: [.6, .6, .6]
+        draw:
+            polygons:
+                order: 1
+                color: [.6, .6, .6]
 
     water:
         data: { source: osm }
-        style:
-            order: 2
-            color: [.4, .4, .4]
+        draw:
+            polygons:
+                order: 2
+                color: [.4, .4, .4]
 
     roads:
         data: { source: osm }
         properties: { mywidth: 3 }
-        style:
-            order: 2
-            color: [1, 1, 1]
-            width: function () { return properties.mywidth; }
+        draw:
+            lines:
+                order: 2
+                color: [1, 1, 1]
+              width: function () { return properties.mywidth; }
 
         cycleway:
             filter: { highway: "cycleway" }
-            style:
-                color: [.8, 0, .8]
-                width: function () { return properties.width * 2; }
+            draw:
+                lines:
+                    color: [.8, 0, .8]
+                    width: function () { return properties.width * 2; }
 
 
         bridges:
             filter: { is_bridge: "yes" }
             properties:
                 width: 3
-            style:
-                color: [0, .8, .8]
-                width: function () { return properties.width * 3; }
+            draw:
+                lines:
+                    color: [0, .8, .8]
+                    width: function () { return properties.width * 3; }
                 width: 9
 
     buildings:
         data: { source: osm }
 
         # properties: { height: 150 }
-        # style:
-        #     order: 4
-        #     color: function () { if (feature.height >= properties.height) { return [1,0,0]; } else { return [1,1,1]; } }
+        # draw:
+        #     polygons:
+            # order: 4
+            #     color: function () { if (feature.height >= properties.height) { return [1,0,0]; } else { return [1,1,1]; } }
         #     extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
 
         properties:
             min_height: 5
         filter: function () { return feature.height > properties.min_height; }
-        style:
-            order: 4
-            name: buildings
-            color: black # must set a vertex color for shader to be applied
-            extrude: true
+        draw:
+            polygons:
+                order: 4
+                style: buildings
+                color: black # must set a vertex color for shader to be applied
+                extrude: true
 
 
 styles:

@@ -1,6 +1,6 @@
 sources:
     osm:
-        type: MVTSource
+        type: MVT
         url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox
         max_zoom: 16
 
