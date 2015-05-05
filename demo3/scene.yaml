@@ -1,0 +1,116 @@
+sources:
+    osm:
+        type: MVT
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mvt
+        max_zoom: 16
+
+styles:
+    buildings-style:
+        base: polygons
+        shaders:
+            uniforms:
+                u_color: [.8, .8, .8]
+            blocks:
+                color: color.rgb = u_color;
+
+    earth-style:
+        base: polygons
+        shaders:
+            uniforms:
+                u_color: [.5, .5, .5]
+            blocks:
+                color: color.rgb = u_color;
+
+    landuse-style:
+        base: polygons
+        shaders:
+            uniforms:
+                u_color: [.6, .6, .6]
+            blocks:
+                color: color.rgb = u_color;
+
+    water-style:
+        base: polygons
+        shaders:
+            uniforms:
+                u_color: [.4, .4, .4]
+            blocks:
+                color: color.rgb = u_color;
+
+    roads-style:
+        base: lines
+        shaders:
+            uniforms:
+                u_color: [1, 1, 1]
+            blocks:
+                color: color.rgb = u_color;
+
+layers:
+    earth:
+        data:
+            source: osm
+        draw:
+            polygons:
+                style: earth-style
+                order: 1
+                color: black # must set a vertex color for shader to be applied
+
+    landuse:
+        data:
+            source: osm
+        draw:
+            polygons:
+                order: 2
+                color: black
+                style: landuse-style
+
+    water:
+        data:
+            source: osm
+        draw:
+            polygons:
+                order: 3
+                color: black
+                style: water-style
+
+    roads:
+        data:
+            source: osm
+        filter:
+            not: { kind: rail, tunnel: yes }
+        draw:
+            lines:
+                order: 4
+                style: roads-style
+                color: black
+                width: 2
+        highway:
+            filter: { kind: highway }
+            draw:
+                lines:
+                    width: 20
+        major_road:
+            filter: { kind: major_road }
+            draw:
+                lines:
+                    width: 10
+        minor_road:
+            filter: { kind: minor_road }
+            draw:
+                lines:
+                    width: 5
+        path: 
+            filter: { kind: path }
+            draw:
+                lines:
+                    width: 1
+
+    buildings:
+        data:
+            source: osm
+        draw:
+            polygons:
+                order: 5
+                color: black
+                style: buildings-style
+

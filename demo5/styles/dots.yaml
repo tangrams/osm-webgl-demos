@@ -1,6 +1,6 @@
 # 3d dots
 dots:
-    extends: polygons
+    base: polygons
     shaders:
         uniforms:
             u_dot_grid_scale: 0.02
@@ -8,7 +8,7 @@ dots:
             u_dot_background_color: [.5, .2, .2]
             u_dot_color: [1, 1, 1]
         blocks:
-            globals: |
+            global: |
 
                 vec3 dots (vec3 pos) {
                     vec3 color = u_dot_background_color;

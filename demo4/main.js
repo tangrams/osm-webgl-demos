@@ -33,7 +33,7 @@
 
     // Tangram layer
     var layer = Tangram.leafletLayer({
-        scene: 'styles.yaml',
+        scene: 'scene.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
@@ -59,18 +59,24 @@
         var layer_gui = gui.addFolder('Layers');
         var layer_colors = {};
         var layer_controls = {};
-        Object.keys(scene.config.layers).forEach(function(l) {
-            if (scene.config.layers[l] == null) {
+        Object.keys(layer.scene.config.layers).forEach(function(l) {
+            if (!layer.scene.config.layers[l]) {
                 return;
             }
 
-            layer_controls[l] = !(scene.config.layers[l].style.visible == false);
+            layer_controls[l] = !(layer.scene.config.layers[l].visible == false);
             layer_gui.
                 add(layer_controls, l).
                 onChange(function(value) {
-                    scene.config.layers[l].style.visible = value;
-                    scene.rebuildGeometry();
+                    layer.scene.config.layers[l].visible = value;
+                    layer.scene.rebuildGeometry();
                 });
+            try {
+                var c = layer.scene.config.layers[l].draw.polygons.color;
+            }
+            catch(e) {
+                var c = layer.scene.config.layers[l].draw.lines.color;
+            }
         });
  
         gui["building height"] = 0;
@@ -97,9 +103,7 @@
         var roadwidth = gui.add(gui, "roadwidth", 0, 100);
         roadwidth.onChange(function(value) {
             scene.config.layers["roads"].properties.width = value;
-            console.log(scene.config.layers["roads"].properties.width);
-            // scene.config.layers["roads"].style.width
-            // scene.config.layers["roads"].bridges.properties.width = value;
+            // scene.config.layers["roads"].properties.width = value;
             scene.rebuildGeometry();
             scene.requestRedraw();
         });

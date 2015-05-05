@@ -1,6 +1,6 @@
 sources:
     local:
-        type: 'GeoJSONTileSource'
+        type: GeoJSON
         url: '../{z}-{x}-{y}.json'
         max_zoom: 16
 
@@ -9,67 +9,76 @@ layers:
         data:
             source: local
             layer: earth
-        style:
-            order: 1
-            color: black # must set a vertex color for shader to be applied
-            name: earth-style
+        draw:
+            polygons:
+                order: 1
+                color: black # must set a vertex color for shader to be applied
+                style: earth-style
 
     landuse:
         data:
             source: local
             layer: landuse
-        style:
-            order: 2
-            color: black
-            name: landuse-style
+        draw:
+            polygons:
+                order: 2
+                color: black
+                style: landuse-style
 
     water:
         data:
             source: local
             layer: water
-        style:
-            order: 3
-            color: black
-            name: water-style
+        draw:
+            polygons:
+                order: 3
+                color: black
+                style: water-style
 
     roads:
         data:
             source: local
             layer: roads
-        style:
-            order: 4
-            name: roads-style
-            color: black
-            width: 2
+        draw:
+            lines:
+                order: 4
+                style: roads-style
+                color: black
+                width: 2
         highway:
             filter: { kind: highway }
-            style:
-                width: 20
+            draw:
+                lines:
+                    width: 20
         major_road:
             filter: { kind: major_road }
-            style:
-                width: 10
+            draw:
+                lines:
+                    width: 10
         minor_road:
             filter: { kind: minor_road }
-            style:
-                width: 5
+            draw:
+                lines:
+                    width: 5
         path: 
             filter: { kind: path }
-            style:
-                width: 1
+            draw:
+                lines:
+                    width: 1
 
     buildings:
         data:
             source: local
             layer: buildings
-        style:
-            order: 5
-            color: black
-            name: buildings-style
+        draw:
+            polygons:
+                order: 5
+                color: black
+                style: buildings-style
 
 styles:
     buildings-style:
-        extends: polygons
+        base: polygons
         shaders:
             uniforms:
                 u_color: [.5, .5, .5]
@@ -77,7 +86,7 @@ styles:
                 color: color.rgb = u_color;
 
     earth-style:
-        extends: polygons
+        base: polygons
         shaders:
             uniforms:
                 u_color: [.6, .6, .6]
@@ -85,7 +94,7 @@ styles:
                 color: color.rgb = u_color;
 
     landuse-style:
-        extends: polygons
+        base: polygons
         shaders:
             uniforms:
                 u_color: [.4, .4, .4]
@@ -93,7 +102,7 @@ styles:
                 color: color.rgb = u_color;
 
     water-style:
-        extends: polygons
+        base: polygons
         shaders:
             uniforms:
                 u_color: [1., 1., 1.]
@@ -101,7 +110,7 @@ styles:
                 color: color.rgb = u_color;
 
     roads-style:
-        extends: polygons
+        base: polygons
         shaders:
             uniforms:
                 u_color: [.8, .8, .8]

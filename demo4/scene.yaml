@@ -10,7 +10,20 @@ lights:
 sources:
     osm:
         type: MVT
-        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mapbox
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mvt
+
+styles:
+    buildings:
+        base: polygons
+        shaders:
+            uniforms:
+                u_height: 0
+                u_color_height: 0
+            blocks:
+                position: position.z *= u_height * .01;
+                color: |
+                    if (v_world_position.z > u_color_height) color.rgb = vec3(.8);
+                    else color.rgb = vec3(.5);
 
 layers:
     earth:
@@ -36,12 +49,12 @@ layers:
 
     roads:
         data: { source: osm }
-        properties: { mywidth: 3 }
+        properties: { width: 3 }
         draw:
             lines:
                 order: 2
                 color: [1, 1, 1]
-              width: function () { return properties.mywidth; }
+                width: 9
 
         cycleway:
             filter: { highway: "cycleway" }
@@ -53,13 +66,10 @@ layers:
 
         bridges:
             filter: { is_bridge: "yes" }
-            properties:
-                width: 3
             draw:
                 lines:
                     color: [0, .8, .8]
                     width: function () { return properties.width * 3; }
-                width: 9
 
     buildings:
         data: { source: osm }
@@ -76,21 +86,8 @@ layers:
         filter: function () { return feature.height > properties.min_height; }
         draw:
             polygons:
-                order: 4
                 style: buildings
+                order: 4
                 color: black # must set a vertex color for shader to be applied
                 extrude: true
 
-
-styles:
-    buildings:
-        extends: polygons
-        shaders:
-            uniforms:
-                u_height: 0
-                u_color_height: 0
-            blocks:
-                position: position.z *= u_height * .01;
-                color: |
-                    if (v_world_position.z > u_color_height) color.rgb = vec3(.8);
-                    else color.rgb = vec3(.5);

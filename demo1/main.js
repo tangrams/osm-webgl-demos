@@ -12,7 +12,7 @@
 
     // Tangram layer
     var layer = Tangram.leafletLayer({
-        scene: 'styles.yaml',
+        scene: 'scene.yaml',
         attribution: 'Map data &copy; OpenStreetMap contributors | <a href="https://github.com/tangrams/tangram">Source Code</a>',
         unloadInvisibleTiles: false,
         updateWhenIdle: false
@@ -37,15 +37,16 @@
 
         // add visibility toggles for each layer
         var layer_controls = {};
-        Object.keys(scene.config.layers).forEach(function(l) {
-            if (scene.config.layers[l] == null) {
+        Object.keys(layer.scene.config.layers).forEach(function(l) {
+            if (!layer.scene.config.layers[l]) {
                 return;
             }
-            layer_controls[l] = !(scene.config.layers[l].style.visible == false);
+
+            layer_controls[l] = !(layer.scene.config.layers[l].visible == false);
             gui.
                 add(layer_controls, l).
                 onChange(function(value) {
-                    scene.config.layers[l].style.visible = value;
+                    layer.scene.config.layers[l].visible = value;
                     layer.scene.rebuildGeometry();
                 });
         });

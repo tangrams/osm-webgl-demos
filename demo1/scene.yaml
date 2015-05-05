@@ -1,12 +1,12 @@
 sources:
     local:
-        type: 'GeoJSONTileSource'
+        type: GeoJSON
         url: '../{z}-{x}-{y}.json'
         max_zoom: 16
 
 styles:
     transparent:
-        extends: polygons
+        base: polygons
         shaders:
             blocks:
                 fragment: if (color == vec4(0.)) discard;
@@ -16,11 +16,13 @@ layers:
         data:
             source: local
             layer: earth
-        style:
-            name: transparent
-            order: 0
-            color: [.0, .0, .0]
+        draw:
+            polygons:
+                style: transparent
+                order: 0
+                color: [.0, .0, .0]
             outline:
+                style: lines
                 color: [1, .5, .5]
                 width: 2px
                 tile_edges: true
@@ -29,11 +31,13 @@ layers:
         data:
             source: local
             layer: landuse
-        style:
-            name: transparent
-            order: 5
-            color: [.0, .0, .0]
+        draw:
+            polygons:
+                style: transparent
+                order: 5
+                color: [.0, .0, .0]
             outline:
+                style: lines
                 color: [.5, 1., .5]
                 width: 2px
 
@@ -41,11 +45,13 @@ layers:
         data:
             source: local
             layer: water
-        style:
-            name: transparent
-            order: 6
-            color: [.0, .0, .0]
+        draw:
+            polygons:
+                style: transparent
+                order: 6
+                color: [.0, .0, .0]
             outline:
+                style: lines
                 color: [.5, .5, 1]
                 width: 2px
                 tile_edges: true
@@ -54,36 +60,43 @@ layers:
         data:
             source: local
             layer: roads
-        style:
-            order: 7
-            color: [1, 1, 1]
-            width: 1
+        draw:
+            lines:
+                order: 7
+                color: [1, 1, 1]
+                width: 1
         highway:
             filter: { kind: highway }
-            style:
-                width: 10
+            draw:
+                lines:
+                    width: 10
         major_road:
             filter: { kind: major_road }
-            style:
-                width: 7
+            draw:
+                lines:
+                    width: 7
         minor_road:
             filter: { kind: minor_road }
-            style:
-                width: 5
+            draw:
+                lines:
+                    width: 5
         path: 
             filter: { kind: path }
-            style:
-                width: 3
+            draw:
+                lines:
+                    width: 3
 
     buildings:
         data:
             source: local
             layer: buildings
-        style:
-            name: transparent
-            order: 8
-            color: [0., .0, .0]
+        draw:
+            polygons:
+                style: transparent
+                order: 8
+                color: [0., .0, .0]
             outline:
+                style: lines
                 tile_edges: true
                 color: [1., .5., 1.]
                 width: 1px
