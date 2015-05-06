@@ -1,6 +1,6 @@
 sources:
     local:
-        type: GeoJSON
+        type: GeoJSONTiles
         url: '../{z}-{x}-{y}.json'
         max_zoom: 16
 
