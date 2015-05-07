@@ -1,7 +1,7 @@
 sources:
     osm:
-        type: MVT
-        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.mvt
+        type: TopoJSONTiles
+        url:  http://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson
         max_zoom: 16
 
 styles:
