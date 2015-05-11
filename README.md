@@ -1,6 +1,8 @@
 osm-webgl-demos
 ============
 
+** *These demos were originally produced for MozFest 2014, and are deprecated as of May 2015. Check out the Tangram repo for links to the latest and greatest demos and code examples!* **
+
 A series of demonstrations originlly made for Mozfest14 showing how OpenStreetMap vector data can be displayed and manipulated in a browser using WebGL.
 
 ### Live version
