@@ -20,6 +20,7 @@ styles:
                 u_height: 0
                 u_color_height: 0
             blocks:
+                # vary color and position by custom uniform, settable by the gui
                 position: position.z *= u_height * .01;
                 color: |
                     if (v_world_position.z > u_color_height) color.rgb = vec3(.8);
@@ -73,21 +74,14 @@ layers:
 
     buildings:
         data: { source: osm }
-
-        # properties: { height: 150 }
-        # draw:
-        #     polygons:
-            # order: 4
-            #     color: function () { if (feature.height >= properties.height) { return [1,0,0]; } else { return [1,1,1]; } }
-        #     extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
-
+        # set a custom property, setable by the gui
         properties:
             min_height: 5
+        # use the custom property to filter the data
         filter: function () { return feature.height > properties.min_height; }
         draw:
             polygons:
                 style: buildings
                 order: 4
-                color: black # must set a vertex color for shader to be applied
                 extrude: true
 

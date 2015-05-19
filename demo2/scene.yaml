@@ -1,6 +1,8 @@
 sources:
     local:
-        type: GeoJSON
+        type: GeoJSONTiles
+        # there's only a single local tile, so this url will produce
+        # a lot of 404 errors – but that's okay for this demo
         url: '../{z}-{x}-{y}.json'
         max_zoom: 16
 
@@ -12,7 +14,6 @@ layers:
         draw:
             polygons:
                 order: 1
-                color: black # must set a vertex color for shader to be applied
                 style: earth-style
 
     landuse:
@@ -22,7 +23,6 @@ layers:
         draw:
             polygons:
                 order: 2
-                color: black
                 style: landuse-style
 
     water:
@@ -32,7 +32,6 @@ layers:
         draw:
             polygons:
                 order: 3
-                color: black
                 style: water-style
 
     roads:
@@ -43,7 +42,6 @@ layers:
             lines:
                 order: 4
                 style: roads-style
-                color: black
                 width: 2
         highway:
             filter: { kind: highway }
@@ -73,15 +71,16 @@ layers:
         draw:
             polygons:
                 order: 5
-                color: black
                 style: buildings-style
 
+# use a custom style for each layer with settable color uniforms,
+# to allow gui control
 styles:
     buildings-style:
         base: polygons
         shaders:
             uniforms:
-                u_color: [.5, .5, .5]
+                u_color: [.5, .5, .5] # default color
             blocks:
                 color: color.rgb = u_color;
 
@@ -110,7 +109,8 @@ styles:
                 color: color.rgb = u_color;
 
     roads-style:
-        base: polygons
+        # "lines" is the draw style of the "roads" layer (and all of its sub-layers)
+        base: lines
         shaders:
             uniforms:
                 u_color: [.8, .8, .8]

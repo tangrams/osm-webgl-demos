@@ -4,11 +4,11 @@ sources:
         url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-HqUVidw
 
 cameras:
-    perspective:
-        type: perspective
-        # focal_length: 1
-        focal_length: [[16, 2], [17, 2.5], [18, 3], [19, 4], [20, 6]] # pairs of [zoom, focal len]
-        vanishing_point: [-250, -250] # relative to center of screen, in pixels
+    # perspective:
+    #     type: perspective
+    #     # focal_length: 1
+    #     focal_length: [[16, 2], [17, 2.5], [18, 3], [19, 4], [20, 6]] # pairs of [zoom, focal len]
+    #     vanishing_point: [-250, -250] # relative to center of screen, in pixels
     isometric:
         type: isometric
         axis: [0,1]
@@ -112,7 +112,6 @@ layers:
             layer: water
         draw:
             polygons:
-            # style: water
                 order: 2
                 interactive: true
                 color: [0.5, 0.5, 0.875]
@@ -122,9 +121,9 @@ layers:
                 width: |
                     function () {
                         return (
-                            zoom >= 16 &&
+                            $zoom >= 16 &&
                             (feature.kind != 'ocean' && feature.kind != 'riverbank') &&
-                            (2.5 * Math.log(zoom))
+                            (2.5 * Math.log($zoom))
                         );
                     }
 
@@ -133,9 +132,9 @@ layers:
             source: osm
             layer: roads
         draw:
-            polygons:
+            lines:
                 order: function () { return 3.5 + Math.min(Math.max(feature.sort_key * .000025, -1), 1) / 2; }
-                interactive: function () { return (zoom >= 18); }
+                interactive: function () { return ($zoom >= 18); }
             outline:
                 style: lines
                 color: [0.7, 0.7, 0.7]
@@ -143,47 +142,47 @@ layers:
         highway:
             filter: { kind: highway }
             draw:
-            polygons:
-                color: [1.0, 1.0, 1.0]
-                width: 9
-                tunnel:
-                    filter: { is_tunnel: yes }
-                    draw:
-                        polygons:
-                            color: '#333'
-                            width: 6
-                        outline:
-                            color: white
-                            width: 2
+                lines:
+                    color: [1.0, 1.0, 1.0]
+                    width: 9
+            tunnel:
+                filter: { is_tunnel: yes }
+                draw:
+                    lines:
+                        color: '#333'
+                        width: 6
+                    outline:
+                        color: white
+                        width: 2
         major_road:
             filter: { kind: major_road }
             draw:
-            polygons:
-                color: [0.5, 0.5, 0.5]
-                width: 5
+                lines:
+                    color: [0.5, 0.5, 0.5]
+                    width: 5
         minor_road:
             filter: { kind: minor_road }
             draw:
-            polygons:
-                color: [0.65, 0.65, 0.65]
-                width: 4              
+                lines:
+                    color: [0.65, 0.65, 0.65]
+                    width: 4              
         path:
             filter:
                kind: path
             draw:
-            polygons:
-                color: [0.8, 0.8, 0.8]
-                width: 3
+                lines:
+                    color: [0.8, 0.8, 0.8]
+                    width: 3
         rail:
             filter:
                 kind: rail
                 not: { is_tunnel: yes }
             draw:
-            polygons:
-                color: [0.5, 0.0, 0.0]
-                width: 3
-                outline:
-                    width: .5
+                lines:
+                    color: [0.5, 0.0, 0.0]
+                    width: 3
+                    outline:
+                        width: .5
 
     buildings:
         data:
@@ -191,22 +190,22 @@ layers:
             layer: buildings
         draw:
             polygons:
-            order: 4
-            interactive: true
-            color: [.6, .6, .6]
-            extrude: function () { return ((zoom >= 15 && feature.height > 20) || zoom >= 16) }
+                order: 4
+                interactive: true
+                color: [.6, .6, .6]
+                extrude: function () { return (($zoom >= 15 && feature.height > 20) || $zoom >= 16) }
         namedBuildings:
-            filter: { style: true }
+            filter: { name: true }
             draw:
-            polygons:
-                color: [.6, .2, .2]
+                polygons:
+                    color: [.6, .2, .2]
             namedKindBuildings:
                 filter: { kind: true }
                 draw:
-            polygons:
-                    color: [.6, .2, .6]
+                    polygons:
+                        color: [.6, .2, .6]
         kindBuildings:
             filter: { style: false, kind: true }
             draw:
-            polygons:
-                color: [.2, .2, .6]
+                polygons:
+                    color: [.2, .2, .6]
