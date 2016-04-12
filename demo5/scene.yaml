@@ -1,14 +1,10 @@
 sources:
     osm:
         type: TopoJSONTiles
-        url:  //vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-HqUVidw
+        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-HqUVidw
+        max_zoom: 16
 
 cameras:
-    # perspective:
-    #     type: perspective
-    #     # focal_length: 1
-    #     focal_length: [[16, 2], [17, 2.5], [18, 3], [19, 4], [20, 6]] # pairs of [zoom, focal len]
-    #     vanishing_point: [-250, -250] # relative to center of screen, in pixels
     isometric:
         type: isometric
         axis: [0,1]
