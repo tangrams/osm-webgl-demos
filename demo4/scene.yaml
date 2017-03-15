@@ -10,7 +10,7 @@ lights:
 sources:
     osm:
         type: TopoJSONTiles
-        url:  https://vector.mapzen.com/osm/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-HqUVidw
+        url:  https://tile.mapzen.com/mapzen/vector/v1/all/{z}/{x}/{y}.topojson?api_key=vector-tiles-HqUVidw
         max_zoom: 16
 
 styles:
